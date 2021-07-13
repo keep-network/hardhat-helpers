@@ -63,22 +63,22 @@ describe("Address", function () {
     })
   })
 
-  describe("match function", function () {
+  describe("equal function", function () {
     it("should return true for exactly the same addresses", function () {
-      expect(address.match(ADDRESS_FORMATTED, ADDRESS_FORMATTED)).to.be.true
+      expect(address.equal(ADDRESS_FORMATTED, ADDRESS_FORMATTED)).to.be.true
     })
 
     it("should return true when one of the addresses is lowercase", function () {
-      expect(address.match(ADDRESS_LOWERCASE, ADDRESS_FORMATTED)).to.be.true
+      expect(address.equal(ADDRESS_LOWERCASE, ADDRESS_FORMATTED)).to.be.true
     })
 
     it("should return true when one of the addresses is not 0x prefixed", function () {
-      expect(address.match(ADDRESS_NO_PREFIX, ADDRESS_FORMATTED)).to.be.true
+      expect(address.equal(ADDRESS_NO_PREFIX, ADDRESS_FORMATTED)).to.be.true
     })
 
     it("should return false when addresses are different", function () {
       expect(
-        address.match(
+        address.equal(
           ADDRESS_FORMATTED,
           "0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b"
         )
@@ -87,7 +87,7 @@ describe("Address", function () {
 
     it("should throw an error for invalid address 1", function () {
       expect(function () {
-        address.match(ADDRESS_INVALID, ADDRESS_FORMATTED)
+        address.equal(ADDRESS_INVALID, ADDRESS_FORMATTED)
       }).to.throw(
         HardhatPluginError,
         "address 0xXYZ4c3967CFb58A5c55f1de4131d126B1eFA1EE0 is not a valid address"
@@ -96,7 +96,7 @@ describe("Address", function () {
 
     it("should throw an error for invalid address 2", function () {
       expect(function () {
-        address.match(ADDRESS_FORMATTED, ADDRESS_INVALID)
+        address.equal(ADDRESS_FORMATTED, ADDRESS_INVALID)
       }).to.throw(
         HardhatPluginError,
         "address 0xXYZ4c3967CFb58A5c55f1de4131d126B1eFA1EE0 is not a valid address"
@@ -105,13 +105,13 @@ describe("Address", function () {
 
     it("should throw an error for zero address 1", function () {
       expect(function () {
-        address.match(ADDRESS_ZERO, ADDRESS_FORMATTED)
+        address.equal(ADDRESS_ZERO, ADDRESS_FORMATTED)
       }).to.throw(HardhatPluginError, "address is a zero address")
     })
 
     it("should throw an error for zero address 2", function () {
       expect(function () {
-        address.match(ADDRESS_FORMATTED, ADDRESS_ZERO)
+        address.equal(ADDRESS_FORMATTED, ADDRESS_ZERO)
       }).to.throw(HardhatPluginError, "address is a zero address")
     })
   })

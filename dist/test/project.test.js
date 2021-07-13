@@ -18,8 +18,8 @@ describe("Hardhat Runtime Environment extension", function () {
         it("isValid function should return true", function () {
             chai_1.expect(this.hre.helpers.address.isValid(VALID_ADDRESS)).to.be.true;
         });
-        it("match function should return true", function () {
-            chai_1.expect(this.hre.helpers.address.match(VALID_ADDRESS, VALID_ADDRESS)).to.be
+        it("equal function should return true", function () {
+            chai_1.expect(this.hre.helpers.address.equal(VALID_ADDRESS, VALID_ADDRESS)).to.be
                 .true;
         });
     });

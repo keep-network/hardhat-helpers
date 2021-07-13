@@ -20,7 +20,7 @@ export declare class Address {
      */
     isValid(address: string): boolean;
     /**
-     * Checks if two addresses match.
+     * Checks if two addresses are the same.
      *
      * @param {string} address1 Address
      * @param {string} address2 Address
@@ -28,6 +28,6 @@ export declare class Address {
      * @throws {HardhatPluginError} If any of the addresses is invalid according
      * to validate function rules.
      */
-    match(address1: string, address2: string): boolean;
+    equal(address1: string, address2: string): boolean;
 }
 //# sourceMappingURL=Address.d.ts.map

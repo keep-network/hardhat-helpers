@@ -41,7 +41,7 @@ class Address {
         return true;
     }
     /**
-     * Checks if two addresses match.
+     * Checks if two addresses are the same.
      *
      * @param {string} address1 Address
      * @param {string} address2 Address
@@ -49,7 +49,7 @@ class Address {
      * @throws {HardhatPluginError} If any of the addresses is invalid according
      * to validate function rules.
      */
-    match(address1, address2) {
+    equal(address1, address2) {
         this.validate(address1);
         this.validate(address2);
         return (ethers_1.ethers.utils.getAddress(address1) === ethers_1.ethers.utils.getAddress(address2));

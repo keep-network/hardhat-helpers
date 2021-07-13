@@ -48,37 +48,37 @@ describe("Address", function () {
             chai_1.expect(address.isValid(ADDRESS_ZERO)).to.be.false;
         });
     });
-    describe("match function", function () {
+    describe("equal function", function () {
         it("should return true for exactly the same addresses", function () {
-            chai_1.expect(address.match(ADDRESS_FORMATTED, ADDRESS_FORMATTED)).to.be.true;
+            chai_1.expect(address.equal(ADDRESS_FORMATTED, ADDRESS_FORMATTED)).to.be.true;
         });
         it("should return true when one of the addresses is lowercase", function () {
-            chai_1.expect(address.match(ADDRESS_LOWERCASE, ADDRESS_FORMATTED)).to.be.true;
+            chai_1.expect(address.equal(ADDRESS_LOWERCASE, ADDRESS_FORMATTED)).to.be.true;
         });
         it("should return true when one of the addresses is not 0x prefixed", function () {
-            chai_1.expect(address.match(ADDRESS_NO_PREFIX, ADDRESS_FORMATTED)).to.be.true;
+            chai_1.expect(address.equal(ADDRESS_NO_PREFIX, ADDRESS_FORMATTED)).to.be.true;
         });
         it("should return false when addresses are different", function () {
-            chai_1.expect(address.match(ADDRESS_FORMATTED, "0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b")).to.be.false;
+            chai_1.expect(address.equal(ADDRESS_FORMATTED, "0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b")).to.be.false;
         });
         it("should throw an error for invalid address 1", function () {
             chai_1.expect(function () {
-                address.match(ADDRESS_INVALID, ADDRESS_FORMATTED);
+                address.equal(ADDRESS_INVALID, ADDRESS_FORMATTED);
             }).to.throw(plugins_1.HardhatPluginError, "address 0xXYZ4c3967CFb58A5c55f1de4131d126B1eFA1EE0 is not a valid address");
         });
         it("should throw an error for invalid address 2", function () {
             chai_1.expect(function () {
-                address.match(ADDRESS_FORMATTED, ADDRESS_INVALID);
+                address.equal(ADDRESS_FORMATTED, ADDRESS_INVALID);
             }).to.throw(plugins_1.HardhatPluginError, "address 0xXYZ4c3967CFb58A5c55f1de4131d126B1eFA1EE0 is not a valid address");
         });
         it("should throw an error for zero address 1", function () {
             chai_1.expect(function () {
-                address.match(ADDRESS_ZERO, ADDRESS_FORMATTED);
+                address.equal(ADDRESS_ZERO, ADDRESS_FORMATTED);
             }).to.throw(plugins_1.HardhatPluginError, "address is a zero address");
         });
         it("should throw an error for zero address 2", function () {
             chai_1.expect(function () {
-                address.match(ADDRESS_FORMATTED, ADDRESS_ZERO);
+                address.equal(ADDRESS_FORMATTED, ADDRESS_ZERO);
             }).to.throw(plugins_1.HardhatPluginError, "address is a zero address");
         });
     });

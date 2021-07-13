@@ -48,7 +48,7 @@ export class Address {
   }
 
   /**
-   * Checks if two addresses match.
+   * Checks if two addresses are the same.
    *
    * @param {string} address1 Address
    * @param {string} address2 Address
@@ -56,7 +56,7 @@ export class Address {
    * @throws {HardhatPluginError} If any of the addresses is invalid according
    * to validate function rules.
    */
-  public match(address1: string, address2: string): boolean {
+  public equal(address1: string, address2: string): boolean {
     this.validate(address1)
     this.validate(address2)
 
