@@ -8,10 +8,8 @@ This plugin contains helpers for Hardhat.
 
 ## Installation
 
-<_A step-by-step guide on how to install the plugin_>
-
 ```bash
-npm install @keep-network/hardhat-helpers ethers@^5.0.32
+yarn add --dev @keep-network/hardhat-helpers ethers@^5.0.32
 ```
 
 Import the plugin in your `hardhat.config.js`:
