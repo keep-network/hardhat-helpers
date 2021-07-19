@@ -1,5 +1,3 @@
-import "@nomiclabs/hardhat-ethers"
-
 import "hardhat/types/runtime"
 
 import type { HardhatHelpers } from "./types"

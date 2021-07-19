@@ -12,6 +12,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "exclude": ["dist", "node_modules"],
+  "exclude": ["dist"],
   "include": ["./test", "./src"]
 }
