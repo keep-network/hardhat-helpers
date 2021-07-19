@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const Address_1 = require("../src/Address");
+const Ownable_1 = require("../src/Ownable");
 const helpers_1 = require("./helpers");
 const VALID_ADDRESS = "0xb894c3967CFb58A5c55f1de4131d126B1eFA1EE0";
 describe("Hardhat Runtime Environment extension", function () {
@@ -10,6 +11,7 @@ describe("Hardhat Runtime Environment extension", function () {
         chai_1.expect(this.hre.helpers).not.to.be.null;
         chai_1.expect(this.hre.helpers).to.contain.all.keys(["address", "ownable"]);
         chai_1.expect(this.hre.helpers.address).to.be.instanceOf(Address_1.Address);
+        chai_1.expect(this.hre.helpers.ownable).to.be.instanceOf(Ownable_1.Ownable);
     });
     describe("address helpers", function () {
         it("validate function should return an address", function () {
@@ -24,10 +26,8 @@ describe("Hardhat Runtime Environment extension", function () {
         });
     });
     describe("ownable helpers", function () {
-        it("transferOwnership function should return an address", function () {
-            this.hre.helpers.ownable.transferOwnership("TestContract", "0x01", {
-                from: "address",
-            });
+        it("transferOwnership function is available", function () {
+            this.hre.helpers.ownable.transferOwnership("TestContract", "ADDRESS_2", "FROM_ADDRESS");
         });
     });
 });

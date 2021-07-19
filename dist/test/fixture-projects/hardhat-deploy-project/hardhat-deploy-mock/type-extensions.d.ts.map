@@ -1,0 +1,1 @@
+{"version":3,"file":"type-extensions.d.ts","sourceRoot":"","sources":["../../../../../test/fixture-projects/hardhat-deploy-project/hardhat-deploy-mock/type-extensions.ts"],"names":[],"mappings":"AAAA,OAAO,uBAAuB,CAAA;AAE9B,OAAO,KAAK,EAAE,wBAAwB,EAAE,MAAM,mBAAmB,CAAA;AAEjE,OAAO,QAAQ,uBAAuB,CAAC;IACrC,UAAiB,yBAAyB;QACxC,WAAW,EAAE,wBAAwB,CAAA;KACtC;CACF"}
