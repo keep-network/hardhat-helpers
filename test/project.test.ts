@@ -12,7 +12,7 @@ describe("Hardhat Runtime Environment extension", function () {
   it("should add the helpers field", function () {
     expect(this.hre.helpers).not.to.be.null
 
-    expect(this.hre.helpers).to.contain.all.keys(["address"])
+    expect(this.hre.helpers).to.contain.all.keys(["address", "ownable"])
 
     expect(this.hre.helpers.address).to.be.instanceOf(Address)
   })
@@ -31,6 +31,14 @@ describe("Hardhat Runtime Environment extension", function () {
     it("equal function should return true", function () {
       expect(this.hre.helpers.address.equal(VALID_ADDRESS, VALID_ADDRESS)).to.be
         .true
+    })
+  })
+
+  describe("ownable helpers", function () {
+    it("transferOwnership function should return an address", function () {
+      this.hre.helpers.ownable.transferOwnership("TestContract", "0x01", {
+        from: "address",
+      })
     })
   })
 })
