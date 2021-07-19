@@ -1,6 +1,7 @@
 import { expect } from "chai"
 
 import { Address } from "../src/Address"
+import { Ownable } from "../src/Ownable"
 
 import { useEnvironment } from "./helpers"
 
@@ -15,6 +16,7 @@ describe("Hardhat Runtime Environment extension", function () {
     expect(this.hre.helpers).to.contain.all.keys(["address", "ownable"])
 
     expect(this.hre.helpers.address).to.be.instanceOf(Address)
+    expect(this.hre.helpers.ownable).to.be.instanceOf(Ownable)
   })
 
   describe("address helpers", function () {
@@ -35,10 +37,12 @@ describe("Hardhat Runtime Environment extension", function () {
   })
 
   describe("ownable helpers", function () {
-    it("transferOwnership function should return an address", function () {
-      this.hre.helpers.ownable.transferOwnership("TestContract", "0x01", {
-        from: "address",
-      })
+    it("transferOwnership function is available", function () {
+      this.hre.helpers.ownable.transferOwnership(
+        "TestContract",
+        "ADDRESS_2",
+        "FROM_ADDRESS"
+      )
     })
   })
 })
