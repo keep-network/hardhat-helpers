@@ -46,6 +46,34 @@ describe("Ownable", function () {
       })
     })
 
+    it("transfers ownership when current owner is not set", async function () {
+      this.hre.deployments.currentOwner = ""
+
+      await ownable.transferOwnership(
+        contractName,
+        newOwnerAddress,
+        fromAddress
+      )
+
+      expect(this.hre.deployments.calls).to.have.lengthOf(2)
+
+      expect(this.hre.deployments.calls[0]).to.deep.equal({
+        functionType: FunctionType.Read,
+        contract: "TestContract",
+        options: { from: fromAddress },
+        methodName: "owner",
+        args: [],
+      })
+
+      expect(this.hre.deployments.calls[1]).to.deep.equal({
+        functionType: FunctionType.Execute,
+        contract: "TestContract",
+        options: { from: fromAddress },
+        methodName: "transferOwnership",
+        args: [newOwnerAddress],
+      })
+    })
+
     it("transfers ownership when new owner is different than current owner", async function () {
       await ownable.transferOwnership(
         contractName,

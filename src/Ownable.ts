@@ -22,11 +22,11 @@ export class Ownable {
     const { helpers, deployments } = this.hre
     const { log } = deployments
 
-    newOwnerAddress = helpers.address.validate(newOwnerAddress)
-
     const currentOwner = await deployments.read(contractName, { from }, "owner")
 
-    if (!helpers.address.equal(currentOwner, newOwnerAddress)) {
+    if (
+      !(currentOwner && helpers.address.equal(currentOwner, newOwnerAddress))
+    ) {
       log(`transferring ownership of ${contractName} to ${newOwnerAddress}`)
 
       await deployments.execute(
