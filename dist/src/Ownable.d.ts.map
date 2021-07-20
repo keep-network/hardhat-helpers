@@ -1,1 +1,0 @@
-{"version":3,"file":"Ownable.d.ts","sourceRoot":"","sources":["../../src/Ownable.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,yBAAyB,EAAE,MAAM,eAAe,CAAA;AAE9D,qBAAa,OAAO;IAClB,GAAG,EAAE,yBAAyB,CAAA;gBAElB,GAAG,EAAE,yBAAyB;IAI1C;;;;;;OAMG;IACU,iBAAiB,CAC5B,YAAY,EAAE,MAAM,EACpB,eAAe,EAAE,MAAM,EACvB,IAAI,EAAE,MAAM,GACX,OAAO,CAAC,IAAI,CAAC;CAqBjB"}

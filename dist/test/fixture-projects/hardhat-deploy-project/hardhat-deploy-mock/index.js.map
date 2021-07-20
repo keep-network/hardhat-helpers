@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../../test/fixture-projects/hardhat-deploy-project/hardhat-deploy-mock/index.ts"],"names":[],"mappings":";;AAAA,2CAAkD;AAClD,uDAA4D;AAE5D,0BAAiB,CAAC,CAAC,GAAG,EAAE,EAAE;IACxB,IAAI,CAAC,GAAG,CAAC,WAAW,EAAE;QACpB,GAAG,CAAC,WAAW,GAAG,IAAI,0CAAwB,EAAE,CAAA;KACjD;AACH,CAAC,CAAC,CAAA"}
