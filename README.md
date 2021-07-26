@@ -9,7 +9,7 @@ This plugin contains helpers for Hardhat.
 ## Installation
 
 ```bash
-yarn add --dev @keep-network/hardhat-helpers ethers@^5.0.32
+yarn add --dev @keep-network/hardhat-helpers ethers@^5.0.32 hardhat-deploy@^0.8.11
 ```
 
 Import the plugin in your `hardhat.config.js`:
