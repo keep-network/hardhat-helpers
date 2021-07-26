@@ -12,7 +12,7 @@ export class Ownable {
    *
    * @param {string} contractName Deployed Contract Name
    * @param {string} newOwnerAddress New Owner Address
-   * @param {from} from Address to send transaction from.
+   * @param {string} from Address to send transaction from.
    */
   public async transferOwnership(
     contractName: string,
