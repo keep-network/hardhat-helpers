@@ -1,5 +1,5 @@
 import type { Address } from "./Address"
-import { Ownable } from "./Ownable"
+import type { Ownable } from "./Ownable"
 
 export interface HardhatHelpers {
   address: Address
