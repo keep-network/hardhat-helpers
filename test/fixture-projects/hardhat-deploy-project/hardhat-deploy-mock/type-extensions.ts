@@ -1,9 +1,9 @@
 import "hardhat/types/runtime"
 
-import type { HardhatHelpers } from "./types"
+import type { DeploymentsExtensionMock } from "./DeploymentsMock"
 
 declare module "hardhat/types/runtime" {
   export interface HardhatRuntimeEnvironment {
-    helpers: HardhatHelpers
+    deployments: DeploymentsExtensionMock
   }
 }
