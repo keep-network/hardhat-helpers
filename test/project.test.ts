@@ -15,7 +15,11 @@ describe("Hardhat Runtime Environment extension", function () {
     it("should add the helpers field", function () {
       expect(this.hre.helpers).not.to.be.null
 
-      expect(this.hre.helpers).to.contain.all.keys(["address", "ownable"])
+      expect(this.hre.helpers).to.contain.all.keys([
+        "address",
+        "ownable",
+        "time",
+      ])
 
       expect(this.hre.helpers.address).to.be.instanceOf(Address)
       expect(this.hre.helpers.ownable).to.be.instanceOf(Ownable)
