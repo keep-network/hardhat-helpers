@@ -1,6 +1,6 @@
 {
   "name": "@keep-network/hardhat-helpers",
-  "version": "0.2.0-pre.1",
+  "version": "0.2.0-pre.2",
   "author": "Jakub Nowakowski <jakub.nowakowski@keep.network>",
   "license": "MIT",
   "main": "dist/src/index.js",
@@ -34,7 +34,7 @@
     "eslint": "^7.30.0",
     "eslint-config-keep": "github:keep-network/eslint-config-keep",
     "ethers": "^5.0.32",
-    "hardhat": "^2.1.1",
+    "hardhat": "^2.6.4",
     "hardhat-deploy": "^0.8.11",
     "mocha": "^9.0.2",
     "prettier": "^2.3.2",
@@ -42,8 +42,9 @@
     "typescript": "^4.3.5"
   },
   "peerDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
     "ethers": "^5.0.32",
-    "hardhat": "^2.1.1",
+    "hardhat": "^2.6.4",
     "hardhat-deploy": "^0.8.11"
   }
 }
