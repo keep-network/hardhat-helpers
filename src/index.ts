@@ -10,8 +10,12 @@ import "./type-extensions"
 extendEnvironment((hre) => {
   hre.helpers = lazyObject(() => {
     return {
-      address: new Address(),
-      ownable: new Ownable(hre),
+      address: lazyObject(() => {
+        return new Address()
+      }),
+      ownable: lazyObject(() => {
+        return new Ownable(hre)
+      }),
       time: lazyObject(() => {
         return time(hre)
       }),
