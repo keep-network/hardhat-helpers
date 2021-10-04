@@ -24,5 +24,5 @@ export interface HardhatTimeHelpers {
    * Mines specific number of blocks.
    * @param {BigNumberish} blocks
    */
-  mineBlocks(blocks: number): Promise<void>
+  mineBlocks(blocks: number): Promise<number>
 }

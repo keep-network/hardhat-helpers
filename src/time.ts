@@ -26,8 +26,6 @@ export async function increaseTime(
   provider: JsonRpcProvider,
   time: BigNumberish
 ): Promise<BigNumber> {
-  // const ethers: ethers = require("ethers")
-
   const lastBlock: number = await lastBlockTime(provider)
   const expectedTime: BigNumber = ethers.BigNumber.from(lastBlock).add(time)
 
@@ -41,14 +39,17 @@ export async function increaseTime(
  * Mines specific number of blocks.
  * @param {JsonRpcProvider} provider Ethers provider
  * @param {BigNumberish} blocks
+ * @return {number} Latest block number.
  */
 export async function mineBlocks(
   provider: JsonRpcProvider,
   blocks: number
-): Promise<void> {
+): Promise<number> {
   for (let i = 0; i < blocks; i++) {
     await provider.send("evm_mine", [])
   }
+
+  return (await provider.getBlock("latest")).number
 }
 
 export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {

@@ -44,19 +44,27 @@ describe("time helpers", function () {
     })
 
     describe("mineBlocks function", function () {
-      it("should mine blocks", async function () {
-        const blocksToMine = 23
+      const blocksToMine = 23
+      let expectedBlockNumber: number
+      let result: number
 
+      beforeEach(async function () {
         const currentBlockNumber = (
           await this.hre.ethers.provider.getBlock("latest")
         ).number
-        const expectedBlockNumber = currentBlockNumber + blocksToMine
+        expectedBlockNumber = currentBlockNumber + blocksToMine
 
-        await timeHelpers.mineBlocks(blocksToMine)
+        result = await timeHelpers.mineBlocks(blocksToMine)
+      })
 
+      it("should mine blocks", async function () {
         expect(
           (await this.hre.ethers.provider.getBlock("latest")).number
         ).to.be.eq(expectedBlockNumber)
+      })
+
+      it("should return increased block number", async function () {
+        expect(result).to.eq(expectedBlockNumber)
       })
     })
   })
