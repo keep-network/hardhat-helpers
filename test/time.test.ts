@@ -67,5 +67,54 @@ describe("time helpers", function () {
         expect(result).to.eq(expectedBlockNumber)
       })
     })
+
+    describe("mineBlocksTo function", function () {
+      let currentBlockNumber: number
+
+      beforeEach(async function () {
+        currentBlockNumber = (await this.hre.ethers.provider.getBlock("latest"))
+          .number
+      })
+
+      it("should complete if target blcok number is greater than the latest block number", async function () {
+        const targetBlock = currentBlockNumber + 20
+
+        const result = await timeHelpers.mineBlocksTo(targetBlock)
+
+        expect(
+          result,
+          "returned block number is not target block number"
+        ).to.eq(targetBlock)
+
+        expect(
+          (await this.hre.ethers.provider.getBlock("latest")).number,
+          "latest block number is not target block number"
+        ).to.be.eq(targetBlock)
+      })
+
+      it("should complete if target block number is equal the latest block number", async function () {
+        const targetBlock = currentBlockNumber
+
+        const result = await timeHelpers.mineBlocksTo(targetBlock)
+
+        expect(
+          result,
+          "returned block number is not target block number"
+        ).to.eq(targetBlock)
+
+        expect(
+          (await this.hre.ethers.provider.getBlock("latest")).number,
+          "latest block number is not target block number"
+        ).to.be.eq(targetBlock)
+      })
+
+      it("should fail if target block number already passed", async function () {
+        const targetBlock = currentBlockNumber - 1
+
+        expect(timeHelpers.mineBlocksTo(targetBlock)).to.be.rejectedWith(
+          `target block number [${targetBlock}] already passed; latest block number is [${currentBlockNumber}]`
+        )
+      })
+    })
   })
 })

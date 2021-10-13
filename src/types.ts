@@ -25,4 +25,9 @@ export interface HardhatTimeHelpers {
    * @param {BigNumberish} blocks
    */
   mineBlocks(blocks: number): Promise<number>
+  /**
+   * Mines blocks to get to a specific block number.
+   * @param {BigNumberish} blocks
+   */
+  mineBlocksTo(blocks: number): Promise<number>
 }
