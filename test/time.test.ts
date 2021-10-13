@@ -67,5 +67,56 @@ describe("time helpers", function () {
         expect(result).to.eq(expectedBlockNumber)
       })
     })
+
+    describe("mineBlocksTo function", function () {
+      const blocksToMine = 20
+      let targetBlock: number
+      let result: number
+
+      beforeEach(async function () {
+        const currentBlockNumber = (
+          await this.hre.ethers.provider.getBlock("latest")
+        ).number
+        targetBlock = currentBlockNumber + blocksToMine
+
+        result = await timeHelpers.mineBlocksTo(targetBlock)
+      })
+
+      it("should mine blocks", async function () {
+        expect(
+          (await this.hre.ethers.provider.getBlock("latest")).number
+        ).to.be.eq(targetBlock)
+      })
+
+      it("should return increased block number", async function () {
+        const currentBlockNumber = (
+          await this.hre.ethers.provider.getBlock("latest")
+        ).number
+
+        const targetBlock = currentBlockNumber
+
+        await timeHelpers.mineBlocksTo(targetBlock)
+
+        expect(result).to.eq(targetBlock)
+      })
+
+      it("should complete if target block number is the latest block number", async function () {
+        expect(
+          (await this.hre.ethers.provider.getBlock("latest")).number
+        ).to.be.eq(targetBlock)
+      })
+
+      it("should fail if target block number already passed", async function () {
+        const currentBlockNumber = (
+          await this.hre.ethers.provider.getBlock("latest")
+        ).number
+
+        const targetBlock = currentBlockNumber - 1
+
+        expect(timeHelpers.mineBlocksTo(targetBlock)).to.be.rejectedWith(
+          `target block number [${targetBlock}] already passed; latest block number is [${currentBlockNumber}]`
+        )
+      })
+    })
   })
 })

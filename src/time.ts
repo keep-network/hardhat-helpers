@@ -38,7 +38,7 @@ export async function increaseTime(
 /**
  * Mines specific number of blocks.
  * @param {JsonRpcProvider} provider Ethers provider
- * @param {BigNumberish} blocks
+ * @param {number} blocks
  * @return {number} Latest block number.
  */
 export async function mineBlocks(
@@ -52,6 +52,33 @@ export async function mineBlocks(
   return (await provider.getBlock("latest")).number
 }
 
+/**
+ * Mines blocks to get to the specific target block number.
+ * @param {JsonRpcProvider} provider Ethers provider
+ * @param {number} targetBlock
+ * @return {number} Latest block number.
+ * @throws Will throw an error if target block already passed.
+ */
+export async function mineBlocksTo(
+  provider: JsonRpcProvider,
+  targetBlock: number
+): Promise<number> {
+  const lastBlockNumber: number = (await provider.getBlock("latest")).number
+
+  if (targetBlock < lastBlockNumber)
+    throw new Error(
+      `target block number already passed; latest block number is [${lastBlockNumber}]`
+    )
+
+  const blocksToMine = targetBlock - lastBlockNumber
+
+  for (let i = 0; i < blocksToMine; i++) {
+    await provider.send("evm_mine", [])
+  }
+
+  return (await provider.getBlock("latest")).number
+}
+
 export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {
   const provider = hre.ethers.provider
 
@@ -59,5 +86,6 @@ export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {
     lastBlockTime: () => lastBlockTime(provider),
     increaseTime: (time: BigNumberish) => increaseTime(provider, time),
     mineBlocks: (blocks: number) => mineBlocks(provider, blocks),
+    mineBlocksTo: (targetBlock: number) => mineBlocksTo(provider, targetBlock),
   }
 }
