@@ -69,48 +69,46 @@ describe("time helpers", function () {
     })
 
     describe("mineBlocksTo function", function () {
-      const blocksToMine = 20
-      let targetBlock: number
-      let result: number
+      let currentBlockNumber: number
 
       beforeEach(async function () {
-        const currentBlockNumber = (
-          await this.hre.ethers.provider.getBlock("latest")
-        ).number
-        targetBlock = currentBlockNumber + blocksToMine
-
-        result = await timeHelpers.mineBlocksTo(targetBlock)
+        currentBlockNumber = (await this.hre.ethers.provider.getBlock("latest"))
+          .number
       })
 
-      it("should mine blocks", async function () {
+      it("should complete if target blcok number is greater than the latest block number", async function () {
+        const targetBlock = currentBlockNumber + 20
+
+        const result = await timeHelpers.mineBlocksTo(targetBlock)
+
         expect(
-          (await this.hre.ethers.provider.getBlock("latest")).number
+          result,
+          "returned block number is not target block number"
+        ).to.eq(targetBlock)
+
+        expect(
+          (await this.hre.ethers.provider.getBlock("latest")).number,
+          "latest block number is not target block number"
         ).to.be.eq(targetBlock)
       })
 
-      it("should return increased block number", async function () {
-        const currentBlockNumber = (
-          await this.hre.ethers.provider.getBlock("latest")
-        ).number
-
+      it("should complete if target block number is equal the latest block number", async function () {
         const targetBlock = currentBlockNumber
 
-        await timeHelpers.mineBlocksTo(targetBlock)
+        const result = await timeHelpers.mineBlocksTo(targetBlock)
 
-        expect(result).to.eq(targetBlock)
-      })
-
-      it("should complete if target block number is the latest block number", async function () {
         expect(
-          (await this.hre.ethers.provider.getBlock("latest")).number
+          result,
+          "returned block number is not target block number"
+        ).to.eq(targetBlock)
+
+        expect(
+          (await this.hre.ethers.provider.getBlock("latest")).number,
+          "latest block number is not target block number"
         ).to.be.eq(targetBlock)
       })
 
       it("should fail if target block number already passed", async function () {
-        const currentBlockNumber = (
-          await this.hre.ethers.provider.getBlock("latest")
-        ).number
-
         const targetBlock = currentBlockNumber - 1
 
         expect(timeHelpers.mineBlocksTo(targetBlock)).to.be.rejectedWith(
