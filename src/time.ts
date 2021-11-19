@@ -6,6 +6,11 @@ import type { HardhatRuntimeEnvironment } from "hardhat/types"
 
 export interface HardhatTimeHelpers {
   /**
+   * Returns number of the latest block.
+   * @return {number} Latest block number.
+   */
+  lastBlockNumber(): Promise<number>
+  /**
    * Returns timestamp of the latest block.
    * @return {number} Latest block timestamp.
    */
@@ -26,6 +31,15 @@ export interface HardhatTimeHelpers {
    * @param {BigNumberish} blocks
    */
   mineBlocksTo(blocks: number): Promise<number>
+}
+
+/**
+ * Returns number of the latest block.
+ * @param {Provider} provider Ethers provider
+ * @return {number} Latest block number.
+ */
+async function lastBlockNumber(provider: Provider): Promise<number> {
+  return (await provider.getBlock("latest")).number
 }
 
 /**
@@ -104,6 +118,7 @@ export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {
   const provider = hre.ethers.provider
 
   return {
+    lastBlockNumber: () => lastBlockNumber(provider),
     lastBlockTime: () => lastBlockTime(provider),
     increaseTime: (time: BigNumberish) => increaseTime(provider, time),
     mineBlocks: (blocks: number) => mineBlocks(provider, blocks),
