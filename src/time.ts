@@ -1,11 +1,32 @@
+import { ethers } from "ethers"
+
 import type { Provider, JsonRpcProvider } from "@ethersproject/providers"
 import type { BigNumberish, BigNumber } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
-import type { HardhatTimeHelpers } from "./types"
 
-import "@nomiclabs/hardhat-ethers"
-
-import { ethers } from "ethers"
+export interface HardhatTimeHelpers {
+  /**
+   * Returns timestamp of the latest block.
+   * @return {number} Latest block timestamp.
+   */
+  lastBlockTime(): Promise<number>
+  /**
+   * Increases block timestamp by the specified time period.
+   * @param {BigNumberish} time Time period that should pass to the next mined block.
+   * @return {number} Timestamp of the next block.
+   */
+  increaseTime(time: BigNumberish): Promise<BigNumber>
+  /**
+   * Mines specific number of blocks.
+   * @param {BigNumberish} blocks
+   */
+  mineBlocks(blocks: number): Promise<number>
+  /**
+   * Mines blocks to get to a specific block number.
+   * @param {BigNumberish} blocks
+   */
+  mineBlocksTo(blocks: number): Promise<number>
+}
 
 /**
  * Returns timestamp of the latest block.
