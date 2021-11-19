@@ -1,6 +1,6 @@
 {
   "name": "@keep-network/hardhat-helpers",
-  "version": "0.2.0-pre.4",
+  "version": "0.3.0",
   "author": "Jakub Nowakowski <jakub.nowakowski@keep.network>",
   "license": "MIT",
   "main": "dist/src/index.js",
