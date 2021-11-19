@@ -1,42 +1,54 @@
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
 
-export class Ownable {
-  hre: HardhatRuntimeEnvironment
-
-  constructor(hre: HardhatRuntimeEnvironment) {
-    this.hre = hre
-  }
-
-  /**
-   * Transfers ownership of an Ownable contract to a specific address.
-   *
-   * @param {string} contractName Deployed Contract Name
-   * @param {string} newOwnerAddress New Owner Address
-   * @param {string} from Address to send transaction from.
-   */
-  public async transferOwnership(
+export interface HardhatOwnableHelpers {
+  transferOwnership(
     contractName: string,
     newOwnerAddress: string,
     from: string
-  ): Promise<void> {
-    const { helpers, deployments } = this.hre
-    const { log } = deployments
+  ): Promise<void>
+}
 
-    const currentOwner = await deployments.read(contractName, { from }, "owner")
+/**
+ * Transfers ownership of an Ownable contract to a specific address.
+ *
+ * @param {HardhatRuntimeEnvironment} hre Hardhat runtime environment.
+ * @param {string} contractName Deployed Contract Name
+ * @param {string} newOwnerAddress New Owner Address
+ * @param {string} from Address to send transaction from.
+ */
+export async function transferOwnership(
+  hre: HardhatRuntimeEnvironment,
+  contractName: string,
+  newOwnerAddress: string,
+  from: string
+): Promise<void> {
+  const { helpers, deployments } = hre
+  const { log } = deployments
 
-    if (
-      !(currentOwner && helpers.address.equal(currentOwner, newOwnerAddress))
-    ) {
-      log(`transferring ownership of ${contractName} to ${newOwnerAddress}`)
+  const currentOwner = await deployments.read(contractName, { from }, "owner")
 
-      await deployments.execute(
-        contractName,
-        { from },
-        "transferOwnership",
-        newOwnerAddress
-      )
-    } else {
-      log(`${contractName} is owned by ${currentOwner}`)
-    }
+  if (!(currentOwner && helpers.address.equal(currentOwner, newOwnerAddress))) {
+    log(`transferring ownership of ${contractName} to ${newOwnerAddress}`)
+
+    await deployments.execute(
+      contractName,
+      { from },
+      "transferOwnership",
+      newOwnerAddress
+    )
+  } else {
+    log(`${contractName} is owned by ${currentOwner}`)
+  }
+}
+
+export default function (
+  hre: HardhatRuntimeEnvironment
+): HardhatOwnableHelpers {
+  return {
+    transferOwnership: (
+      contractName: string,
+      newOwnerAddress: string,
+      from: string
+    ) => transferOwnership(hre, contractName, newOwnerAddress, from),
   }
 }
