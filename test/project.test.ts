@@ -1,7 +1,5 @@
 import { expect } from "chai"
 
-import { Address } from "../src/Address"
-import { Ownable } from "../src/Ownable"
 import { ADDRESS_2, ADDRESS_3 } from "./data/address"
 
 import { useEnvironment } from "./helpers"
@@ -14,15 +12,6 @@ describe("Hardhat Runtime Environment extension", function () {
 
     it("should add the helpers field", function () {
       expect(this.hre.helpers).not.to.be.null
-
-      expect(this.hre.helpers).to.contain.all.keys([
-        "address",
-        "ownable",
-        "time",
-      ])
-
-      expect(this.hre.helpers.address).to.be.instanceOf(Address)
-      expect(this.hre.helpers.ownable).to.be.instanceOf(Ownable)
     })
 
     describe("address helpers", function () {
