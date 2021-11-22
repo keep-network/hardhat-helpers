@@ -33,6 +33,7 @@ jobs:
           echo "TEST" >> test.txt
           git add test.txt
           git commit -m "TEST"
+          git push
 
       - name: Push git commit
         run: git push
