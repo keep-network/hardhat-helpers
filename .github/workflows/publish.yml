@@ -33,14 +33,13 @@ jobs:
         run: yarn test
 
       - name: Setup git credentials
-        if: github.event_name != 'pull_request'
+        # if: github.event_name != 'pull_request'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
       - name: Publish pre-release package
         # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        # TEST
         run: yarn publish --non-interactive --prerelease --preid pre --message "Pre-release v%s [skip ci]" --tag "pre"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
