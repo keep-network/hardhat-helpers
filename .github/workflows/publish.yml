@@ -25,15 +25,6 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           scope: "@keep-network"
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build
-        run: yarn build
-
-      - name: Test
-        run: yarn test
-
       - name: Setup git credentials
         if: github.event_name != 'pull_request'
         run: |
