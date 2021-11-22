@@ -50,3 +50,7 @@ jobs:
         run: yarn publish --non-interactive --message "Release v%s [skip ci]" --tag "latest"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push git commit
+        if: github.event_name != 'pull_request'
+        run: git push
