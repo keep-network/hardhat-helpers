@@ -40,6 +40,8 @@ jobs:
         with:
           node-version: "16"
           cache: "yarn"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@keep-network"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -49,3 +51,5 @@ jobs:
 
       - name: Publish package
         run: yarn publish --non-interactive --prerelease --preid pre
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
