@@ -1,0 +1,59 @@
+name: NPM Package Publish
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+jobs:
+  build-test-publish:
+    name: Build, test and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          cache: "yarn"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@keep-network"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Test
+        run: yarn test
+
+      - name: Setup git credentials
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      # On main merge or manual workflow dispatch publish a pre-release package.
+      # Automatically bump version based on the current version stored in package.json.
+      - name: Publish pre-release package
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: yarn publish --non-interactive --prerelease --preid pre --message "Pre-release v%s [skip ci]" --tag "pre"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # On release creation publish a release package with the same version as
+      # the one stored in package.json.
+      - name: Publish release package
+        if: github.event_name == 'release'
+        run: yarn publish --non-interactive --message "Release v%s [skip ci]" --tag "latest"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push git commit
+        if: github.event_name != 'pull_request'
+        run: git push
