@@ -58,12 +58,12 @@ jobs:
 
       - name: Publish pre-release package
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        run: yarn publish --non-interactive --prerelease --preid pre --message "Pre-release v%s [skip ci]"
+        run: yarn publish --non-interactive --prerelease --preid pre --message "Pre-release v%s [skip ci]" --tag "pre"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish release package
         if: github.event_name == 'release'
-        run: yarn publish --non-interactive --message "Release v%s [skip ci]"
+        run: yarn publish --non-interactive --message "Release v%s [skip ci]" --tag "latest"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
