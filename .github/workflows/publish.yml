@@ -38,12 +38,16 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
+      # On main merge or manual workflow dispatch publish a pre-release package.
+      # Automatically bump version based on the current version stored in package.json.
       - name: Publish pre-release package
         # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: yarn publish --non-interactive --prerelease --preid pre --message "Pre-release v%s [skip ci]" --tag "pre"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # On release creation publish a release package with the same version as
+      # the one stored in package.json.
       - name: Publish release package
         if: github.event_name == 'release'
         run: yarn publish --non-interactive --message "Release v%s [skip ci]" --tag "latest"
@@ -51,5 +55,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push git commit
-        if: github.event_name != 'pull_request'
+        # if: github.event_name != 'pull_request'
         run: git push
