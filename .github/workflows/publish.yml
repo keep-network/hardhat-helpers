@@ -10,38 +10,11 @@ on:
     types: [created]
 
 jobs:
-  build-and-test:
+  build-test-publish:
     name: Build and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-          cache: "yarn"
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build
-        run: yarn build
-
-      - name: Test
-        run: yarn test
-
-  publish:
-    name: Publish
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    # if: github.event_name != 'pull_request'
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup git credentials
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
 
       - uses: actions/setup-node@v2
         with:
@@ -55,6 +28,15 @@ jobs:
 
       - name: Build
         run: yarn build
+
+      - name: Test
+        run: yarn test
+
+      - name: Setup git credentials
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
 
       - name: Publish pre-release package
         # if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
