@@ -26,7 +26,6 @@ jobs:
           scope: "@keep-network"
 
       - name: Setup git credentials
-        if: github.event_name != 'pull_request'
         run: |
           git config user.name Heimdall
           git config user.email thesis-heimdall@users.noreply.github.com
@@ -35,5 +34,4 @@ jobs:
           git commit -m "TEST"
 
       - name: Push git commit
-        if: github.event_name != 'pull_request'
         run: git push
