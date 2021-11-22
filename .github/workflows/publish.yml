@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.CI_GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v2
         with:
@@ -35,8 +37,8 @@ jobs:
       - name: Setup git credentials
         if: github.event_name != 'pull_request'
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name Heimdall
+          git config user.email thesis-heimdall@users.noreply.github.com
 
       # On main merge or manual workflow dispatch publish a pre-release package.
       # Automatically bump version based on the current version stored in package.json.
