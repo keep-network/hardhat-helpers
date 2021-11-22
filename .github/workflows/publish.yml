@@ -1,4 +1,4 @@
-name: TEST
+name: NPM Package Publish
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
           git config user.email thesis-heimdall@users.noreply.github.com
           echo "TEST" >> test.txt
           git add test.txt
-          git commit -m "TEST"
+          git commit -m "TEST [skip ci]"
 
       - name: Push git commit
         run: git push
