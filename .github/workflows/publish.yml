@@ -28,7 +28,7 @@ jobs:
 
       - name: Setup git credentials
         run: |
-          git config user.name Heimdall
+          git config user.name @thesis-heimdall
           git config user.email thesis-heimdall@users.noreply.github.com
           echo "TEST" >> test.txt
           git add test.txt
