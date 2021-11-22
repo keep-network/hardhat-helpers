@@ -1,11 +1,46 @@
+import { ethers } from "ethers"
+
 import type { Provider, JsonRpcProvider } from "@ethersproject/providers"
 import type { BigNumberish, BigNumber } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
-import type { HardhatTimeHelpers } from "./types"
 
-import "@nomiclabs/hardhat-ethers"
+export interface HardhatTimeHelpers {
+  /**
+   * Returns number of the latest block.
+   * @return {number} Latest block number.
+   */
+  lastBlockNumber(): Promise<number>
+  /**
+   * Returns timestamp of the latest block.
+   * @return {number} Latest block timestamp.
+   */
+  lastBlockTime(): Promise<number>
+  /**
+   * Increases block timestamp by the specified time period.
+   * @param {BigNumberish} time Time period that should pass to the next mined block.
+   * @return {number} Timestamp of the next block.
+   */
+  increaseTime(time: BigNumberish): Promise<BigNumber>
+  /**
+   * Mines specific number of blocks.
+   * @param {BigNumberish} blocks
+   */
+  mineBlocks(blocks: number): Promise<number>
+  /**
+   * Mines blocks to get to a specific block number.
+   * @param {BigNumberish} blocks
+   */
+  mineBlocksTo(blocks: number): Promise<number>
+}
 
-import { ethers } from "ethers"
+/**
+ * Returns number of the latest block.
+ * @param {Provider} provider Ethers provider
+ * @return {number} Latest block number.
+ */
+async function lastBlockNumber(provider: Provider): Promise<number> {
+  return (await provider.getBlock("latest")).number
+}
 
 /**
  * Returns timestamp of the latest block.
@@ -83,6 +118,7 @@ export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {
   const provider = hre.ethers.provider
 
   return {
+    lastBlockNumber: () => lastBlockNumber(provider),
     lastBlockTime: () => lastBlockTime(provider),
     increaseTime: (time: BigNumberish) => increaseTime(provider, time),
     mineBlocks: (blocks: number) => mineBlocks(provider, blocks),

@@ -1,29 +1,26 @@
 import { HardhatPluginError } from "hardhat/plugins"
-
 import { useEnvironment } from "./helpers"
-
-import { Ownable } from "../src/Ownable"
 import { FunctionType } from "./fixture-projects/hardhat-deploy-project/hardhat-deploy-mock/DeploymentsMock"
-
-import chai from "chai"
-chai.use(require("chai-as-promised"))
-const { expect } = chai
-
 import {
   ADDRESS_1 as oldOwnerAddress,
   ADDRESS_2 as newOwnerAddress,
   ADDRESS_3 as fromAddress,
   ADDRESS_ZERO,
 } from "./data/address"
+import type { HardhatOwnableHelpers } from "./ownable"
+
+import chai from "chai"
+chai.use(require("chai-as-promised"))
+const { expect } = chai
 
 describe("Ownable", function () {
   useEnvironment("hardhat-deploy-project")
 
   const contractName: string = "TestContract"
 
-  let ownable: Ownable
+  let ownable: HardhatOwnableHelpers
   beforeEach(function () {
-    ownable = new Ownable(this.hre)
+    ownable = this.hre.helpers.ownable
     this.hre.deployments.currentOwner = oldOwnerAddress
   })
 

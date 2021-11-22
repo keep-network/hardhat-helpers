@@ -1,7 +1,8 @@
 import { expect } from "chai"
 import { HardhatPluginError } from "hardhat/plugins"
+import { useEnvironment } from "./helpers"
 
-import { Address } from "../src/Address"
+import * as address from "../src/address"
 
 import {
   ADDRESS_1,
@@ -13,7 +14,7 @@ import {
 } from "./data/address"
 
 describe("Address", function () {
-  const address = new Address()
+  useEnvironment("hardhat-project")
 
   describe("validate function", function () {
     it("should return address for valid address", function () {

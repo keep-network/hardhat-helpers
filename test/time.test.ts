@@ -2,7 +2,7 @@ import { expect } from "chai"
 import { useEnvironment } from "./helpers"
 
 import type { BigNumber } from "ethers"
-import type { HardhatTimeHelpers } from "./types"
+import type { HardhatTimeHelpers } from "./time"
 
 describe("time helpers", function () {
   context("default hardhat project", function () {
