@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-test-publish:
-    name: Build and test
+    name: Build, test and publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
