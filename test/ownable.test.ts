@@ -7,7 +7,7 @@ import {
   ADDRESS_3 as fromAddress,
   ADDRESS_ZERO,
 } from "./data/address"
-import type { HardhatOwnableHelpers } from "./ownable"
+import type { HardhatOwnableHelpers } from "../src/ownable"
 
 import chai from "chai"
 chai.use(require("chai-as-promised"))
