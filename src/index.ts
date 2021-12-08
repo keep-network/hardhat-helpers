@@ -7,6 +7,7 @@ import forking from "./forking"
 import * as number from "./number"
 import ownable from "./ownable"
 import time from "./time"
+import snapshot from "./snapshot"
 
 import "./type-extensions"
 
@@ -30,6 +31,9 @@ extendEnvironment((hre) => {
       }),
       time: lazyObject(() => {
         return time(hre)
+      }),
+      snapshot: lazyObject(() => {
+        return snapshot(hre)
       }),
     }
   })
