@@ -1,12 +1,13 @@
 import "@nomiclabs/hardhat-ethers"
 
-import { BigNumberish, Signer } from "ethers"
+import type { BigNumberish, BigNumber, Signer } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
 import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 
 export type FundOptions = {
   from: Signer
   value?: BigNumberish
+  unit?: string
 }
 
 export interface HardhatAccountHelpers {
@@ -19,7 +20,7 @@ export interface HardhatAccountHelpers {
 async function impersonateAccount(
   hre: HardhatRuntimeEnvironment,
   accountAddress: string,
-  fundOptions: FundOptions
+  fundOptions?: FundOptions
 ) {
   // Make the required call against Hardhat Runtime Environment.
   await hre.network.provider.request({
@@ -27,13 +28,26 @@ async function impersonateAccount(
     params: [accountAddress],
   })
 
-  if (fundOptions.from!) {
+  if (fundOptions?.from!) {
     // Fund the account using a purse account in order to make transactions.
     // In case the account represents a contract, keep in mind the contract must
     // have a receive or fallback method to be funded successfully.
+
+    let fundingValue: BigNumber
+    if (fundOptions.unit) {
+      fundingValue = hre.ethers.utils.parseUnits(
+        fundOptions.value!.toString(),
+        fundOptions.unit
+      )
+    } else {
+      fundingValue = hre.ethers.utils.parseEther(
+        fundOptions.value?.toString() || "1"
+      )
+    }
+
     await fundOptions.from.sendTransaction({
       to: accountAddress,
-      value: fundOptions.value || hre.ethers.utils.parseEther("1"),
+      value: fundingValue,
     })
   }
 
