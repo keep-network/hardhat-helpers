@@ -2,7 +2,7 @@ import { expect } from "chai"
 import { useEnvironment } from "./helpers"
 
 import { HardhatPluginError } from "hardhat/plugins"
-import type { HardhatForkingHelpers } from "./forking"
+import type { HardhatForkingHelpers } from "../src/forking"
 import { RequestArguments } from "hardhat/types"
 
 describe("forking helpers", function () {
