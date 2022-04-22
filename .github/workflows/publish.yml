@@ -57,5 +57,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push git commit
-        if: github.event_name != 'pull_request' && github.event_name == 'release'
+        if: github.event_name != 'pull_request'
         run: git push
