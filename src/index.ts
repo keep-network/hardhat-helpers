@@ -8,6 +8,7 @@ import * as number from "./number"
 import ownable from "./ownable"
 import time from "./time"
 import snapshot from "./snapshot"
+import upgrades from "./upgrades"
 
 import "./type-extensions"
 
@@ -34,6 +35,9 @@ extendEnvironment((hre) => {
       }),
       snapshot: lazyObject(() => {
         return snapshot(hre)
+      }),
+      upgrades: lazyObject(() => {
+        return upgrades(hre)
       }),
     }
   })
