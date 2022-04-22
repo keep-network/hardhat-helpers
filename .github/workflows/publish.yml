@@ -52,10 +52,10 @@ jobs:
       # the one stored in package.json.
       - name: Publish release package
         if: github.event_name == 'release'
-        run: yarn publish --non-interactive --message "Release v%s [skip ci]" --tag "latest"
+        run: yarn publish --non-interactive --message "Release v%s [skip ci]" --tag "latest" --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push git commit
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.event_name == 'release'
         run: git push
