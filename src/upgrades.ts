@@ -1,5 +1,3 @@
-import "@openzeppelin/hardhat-upgrades"
-
 import type { Contract, ContractFactory } from "ethers"
 import type { FactoryOptions, HardhatRuntimeEnvironment } from "hardhat/types"
 import type { Deployment } from "hardhat-deploy/dist/types"
