@@ -1,6 +1,6 @@
 {
   "name": "@keep-network/hardhat-helpers",
-  "version": "0.4.1-pre.2",
+  "version": "0.5.0-pre.5",
   "author": "Jakub Nowakowski <jakub.nowakowski@keep.network>",
   "license": "MIT",
   "main": "dist/src/index.js",
@@ -11,7 +11,7 @@
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.export.json",
     "prepare": "npm run build"
   },
   "files": [
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@keep-network/prettier-config-keep": "github:keep-network/prettier-config-keep",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@openzeppelin/hardhat-upgrades": "^1.17.0",
     "@types/chai": "^4.2.21",
     "@types/chai-as-promised": "^7.1.4",
     "@types/mocha": "^8.2.3",
@@ -43,6 +44,7 @@
   },
   "peerDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@openzeppelin/hardhat-upgrades": "^1.17.0",
     "ethers": "^5.0.32",
     "hardhat": "^2.6.4",
     "hardhat-deploy": "^0.8.11"

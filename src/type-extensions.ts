@@ -7,6 +7,7 @@ import type { HardhatTimeHelpers } from "./time"
 import type { HardhatForkingHelpers } from "./forking"
 import type { HardhatNumberHelpers } from "./number"
 import type { HardhatSnapshotHelpers } from "./snapshot"
+import type { HardhatUpgradesHelpers } from "./upgrades"
 
 declare module "hardhat/types/runtime" {
   export interface HardhatRuntimeEnvironment {
@@ -22,4 +23,5 @@ export interface HardhatHelpers {
   ownable: HardhatOwnableHelpers
   time: HardhatTimeHelpers
   snapshot: HardhatSnapshotHelpers
+  upgrades: HardhatUpgradesHelpers
 }

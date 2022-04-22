@@ -1,4 +1,10 @@
-import type { TxOptions, CallOptions, Receipt } from "hardhat-deploy/types"
+import type {
+  TxOptions,
+  CallOptions,
+  Receipt,
+  Deployment,
+  DeploymentSubmission,
+} from "hardhat-deploy/types"
 
 /* eslint-disable no-unused-vars */
 export enum FunctionType {
@@ -35,6 +41,10 @@ export interface DeploymentsExtension {
     methodName: string,
     ...args: any[]
   ): Promise<Receipt>
+
+  get(name: string): Promise<Deployment>
+  getOrNull(name: string): Promise<Deployment | null>
+  save(name: string, deployment: DeploymentSubmission): Promise<void>
 }
 
 export class DeploymentsExtensionMock implements DeploymentsExtension {
@@ -76,6 +86,21 @@ export class DeploymentsExtensionMock implements DeploymentsExtension {
       cumulativeGasUsed: 101,
       gasUsed: 20,
     }
+  }
+
+  public async get(name: string): Promise<Deployment> {
+    return {} as Deployment
+  }
+
+  public async getOrNull(name: string): Promise<Deployment | null> {
+    return null
+  }
+
+  public async save(
+    name: string,
+    deployment: DeploymentSubmission
+  ): Promise<void> {
+    return
   }
 
   registerCall(
