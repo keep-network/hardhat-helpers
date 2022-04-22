@@ -13,7 +13,7 @@ export type FundOptions = {
 export interface HardhatAccountHelpers {
   impersonateAccount(
     accountAddress: string,
-    fundOptions: FundOptions
+    fundOptions?: FundOptions
   ): Promise<SignerWithAddress>
 }
 
