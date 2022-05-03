@@ -73,10 +73,20 @@ export async function deployProxy<T extends Contract>(
     ethers.utils.FormatTypes.json
   )
 
+  const implementation = await (
+    await upgrades.admin.getInstance()
+  ).getProxyImplementation(contractInstance.address)
+
   const deployment: Deployment = {
     address: contractInstance.address,
     abi: JSON.parse(jsonAbi as string),
     transactionHash: contractInstance.deployTransaction.hash,
+    implementation: implementation,
+    receipt: await ethers.provider.getTransactionReceipt(
+      contractInstance.deployTransaction.hash
+    ),
+    libraries: opts?.factoryOpts?.libraries,
+    devdoc: "Contract deployed as upgradable proxy",
     // args: opts?.initializerArgs,
   }
 
