@@ -67,7 +67,11 @@ export async function deployProxy<T extends Contract>(
     opts?.proxyOpts
   )) as T
 
-  log(`Deployed ${name} with TransparentProxy at ${contractInstance.address}`)
+  log(
+    `Deployed ${name} as ${opts?.proxyOpts?.kind || "transparent"} proxy at ${
+      contractInstance.address
+    }`
+  )
 
   const jsonAbi = contractInstance.interface.format(
     ethers.utils.FormatTypes.json
