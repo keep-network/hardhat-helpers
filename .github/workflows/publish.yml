@@ -7,7 +7,7 @@ on:
   pull_request:
   workflow_dispatch:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build-test-publish:
@@ -57,5 +57,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push git commit
-        if: github.event_name != 'pull_request' && github.event_name == 'release'
+        if: github.event_name != 'pull_request' && github.event_name != 'release'
         run: git push
