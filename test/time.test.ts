@@ -1,8 +1,11 @@
-import { expect } from "chai"
 import { useEnvironment } from "./helpers"
 
 import type { BigNumber } from "ethers"
 import type { HardhatTimeHelpers } from "../src/time"
+
+import chai from "chai"
+chai.use(require("chai-as-promised"))
+const { expect } = chai
 
 describe("time helpers", function () {
   context("default hardhat project", function () {
