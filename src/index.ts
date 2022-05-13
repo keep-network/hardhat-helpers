@@ -12,6 +12,9 @@ import upgrades from "./upgrades"
 
 import "./type-extensions"
 
+import "hardhat-deploy/dist/src/type-extensions"
+import "@openzeppelin/hardhat-upgrades/dist/type-extensions"
+
 extendEnvironment((hre) => {
   hre.helpers = lazyObject(() => {
     return {
