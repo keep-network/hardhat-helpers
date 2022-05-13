@@ -34,7 +34,7 @@ describe("Hardhat Runtime Environment extension", function () {
   })
 
   context("project using hardhat-deploy", function () {
-    useEnvironment("hardhat-deploy-project")
+    useEnvironment("hardhat-deploy-mocked")
 
     describe("ownable helpers", function () {
       it("transferOwnership function is available", async function () {

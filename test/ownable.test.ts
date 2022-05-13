@@ -1,6 +1,6 @@
 import { HardhatPluginError } from "hardhat/plugins"
 import { useEnvironment } from "./helpers"
-import { FunctionType } from "./fixture-projects/hardhat-deploy-project/hardhat-deploy-mock/DeploymentsMock"
+import { FunctionType } from "./fixture-projects/hardhat-deploy-mocked/hardhat-deploy-mock/DeploymentsMock"
 import {
   ADDRESS_1 as oldOwnerAddress,
   ADDRESS_2 as newOwnerAddress,
@@ -9,12 +9,14 @@ import {
 } from "./data/address"
 import type { HardhatOwnableHelpers } from "../src/ownable"
 
+import "./fixture-projects/hardhat-deploy-mocked/hardhat-deploy-mock/type-extensions"
+
 import chai from "chai"
 chai.use(require("chai-as-promised"))
 const { expect } = chai
 
 describe("Ownable", function () {
-  useEnvironment("hardhat-deploy-project")
+  useEnvironment("hardhat-deploy-mocked")
 
   const contractName: string = "TestContract"
 

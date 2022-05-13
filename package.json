@@ -3,8 +3,8 @@
   "version": "0.6.0-pre.2",
   "author": "Jakub Nowakowski <jakub.nowakowski@keep.network>",
   "license": "MIT",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "format": "npm run lint && prettier --check .",
     "format:fix": "npm run lint:fix && prettier --write .",
@@ -12,10 +12,10 @@
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
     "build": "tsc --project tsconfig.export.json",
-    "prepare": "npm run build"
+    "prepack": "npm run build"
   },
   "files": [
-    "dist/src/",
+    "dist/",
     "src/",
     "LICENSE",
     "README.md"
