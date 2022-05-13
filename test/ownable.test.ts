@@ -9,6 +9,8 @@ import {
 } from "./data/address"
 import type { HardhatOwnableHelpers } from "../src/ownable"
 
+import "./fixture-projects/hardhat-deploy-mocked/hardhat-deploy-mock/type-extensions"
+
 import chai from "chai"
 chai.use(require("chai-as-promised"))
 const { expect } = chai
