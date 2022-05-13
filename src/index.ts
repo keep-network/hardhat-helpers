@@ -3,10 +3,12 @@ import { lazyObject } from "hardhat/plugins"
 
 import account from "./account"
 import * as address from "./address"
+import contracts from "./contracts"
 import forking from "./forking"
 import * as number from "./number"
 import ownable from "./ownable"
 import time from "./time"
+import signers from "./signers"
 import snapshot from "./snapshot"
 import upgrades from "./upgrades"
 
@@ -24,6 +26,9 @@ extendEnvironment((hre) => {
       address: lazyObject(() => {
         return address
       }),
+      contracts: lazyObject(() => {
+        return contracts(hre)
+      }),
       forking: lazyObject(() => {
         return forking(hre)
       }),
@@ -35,6 +40,9 @@ extendEnvironment((hre) => {
       }),
       time: lazyObject(() => {
         return time(hre)
+      }),
+      signers: lazyObject(() => {
+        return signers(hre)
       }),
       snapshot: lazyObject(() => {
         return snapshot(hre)
