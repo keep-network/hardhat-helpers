@@ -1,11 +1,11 @@
-import type { BaseContract } from "ethers"
+import type { Contract } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
 
 export interface HardhatContractsHelpers {
-  getContract<T extends BaseContract>(deploymentName: string): Promise<T>
+  getContract<T extends Contract>(deploymentName: string): Promise<T>
 }
 
-async function getContract<T extends BaseContract>(
+async function getContract<T extends Contract>(
   hre: HardhatRuntimeEnvironment,
   deploymentName: string
 ): Promise<T> {
