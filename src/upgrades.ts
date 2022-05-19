@@ -56,10 +56,10 @@ export async function deployProxy<T extends Contract>(
     )
   }
 
-  const contractFactory: ContractFactory = await ethers.getContractFactory(
-    opts?.contractName || name,
-    opts?.factoryOpts
-  )
+  const artifact = await deployments.getArtifact(opts?.contractName || name)
+
+  const contractFactory: ContractFactory =
+    await ethers.getContractFactoryFromArtifact(artifact, opts?.factoryOpts)
 
   const contractInstance: T = (await upgrades.deployProxy(
     contractFactory,
