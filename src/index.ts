@@ -1,5 +1,10 @@
-import { extendEnvironment } from "hardhat/config"
-import { lazyObject } from "hardhat/plugins"
+import { extendEnvironment, task } from "hardhat/config"
+import { HardhatPluginError, lazyObject } from "hardhat/plugins"
+import { enableEmoji, emoji } from "hardhat/internal/cli/emoji"
+
+import * as types from "hardhat/internal/core/params/argumentTypes"
+import fs from "fs-extra"
+import * as path from "path"
 
 import account from "./account"
 import * as address from "./address"
@@ -18,6 +23,10 @@ import "hardhat-deploy/dist/src/type-extensions"
 import "@openzeppelin/hardhat-upgrades/dist/type-extensions"
 
 extendEnvironment((hre) => {
+  if (hre.hardhatArguments.emoji) {
+    enableEmoji()
+  }
+
   hre.helpers = lazyObject(() => {
     return {
       account: lazyObject(() => {
@@ -53,3 +62,41 @@ extendEnvironment((hre) => {
     }
   })
 })
+
+export const TASK_PREPARE_ARTIFACTS = "prepare-artifacts"
+
+task(TASK_PREPARE_ARTIFACTS)
+  .addOptionalPositionalParam(
+    "destination",
+    "destination folder where the artifacts files will be written to",
+    "artifacts",
+    types.string
+  )
+  .setAction(async (args, hre) => {
+    const sourceDir = path.join(hre.config.paths.deployments, hre.network.name)
+    const destinationDir = path.join(hre.config.paths.root, args.destination)
+
+    console.log(
+      `Preparing deployment artifacts for network ${hre.network.name}...`
+    )
+
+    if (!fs.pathExistsSync(sourceDir)) {
+      throw new HardhatPluginError(
+        "@keep-network/hardhat-helpers",
+        `source deployments artifacts directory doesn't exist [${sourceDir}]`
+      )
+    }
+
+    console.debug(
+      `  Source:      ${sourceDir}\n  Destination: ${destinationDir}`
+    )
+
+    fs.ensureDirSync(destinationDir)
+    fs.emptyDirSync(destinationDir)
+
+    fs.copySync(sourceDir, destinationDir, {
+      recursive: true,
+    })
+
+    console.log(`${emoji("🙌 ")}Done!`)
+  })
