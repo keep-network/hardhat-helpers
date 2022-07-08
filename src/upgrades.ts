@@ -46,7 +46,7 @@ export async function deployProxy<T extends Contract>(
   name: string,
   opts?: UpgradesDeployOptions
 ): Promise<T> {
-  const { ethers, upgrades, deployments } = hre
+  const { ethers, upgrades, deployments, artifacts } = hre
   const { log } = deployments
 
   const existingDeployment = await deployments.getOrNull(name)
@@ -73,9 +73,7 @@ export async function deployProxy<T extends Contract>(
     }`
   )
 
-  const jsonAbi = contractInstance.interface.format(
-    ethers.utils.FormatTypes.json
-  )
+  const artifact = artifacts.readArtifactSync(opts?.contractName || name)
 
   const implementation = await (
     await upgrades.admin.getInstance()
@@ -83,7 +81,7 @@ export async function deployProxy<T extends Contract>(
 
   const deployment: Deployment = {
     address: contractInstance.address,
-    abi: JSON.parse(jsonAbi as string),
+    abi: artifact.abi,
     transactionHash: contractInstance.deployTransaction.hash,
     implementation: implementation,
     receipt: await ethers.provider.getTransactionReceipt(
