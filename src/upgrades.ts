@@ -67,6 +67,10 @@ export async function deployProxy<T extends Contract>(
     opts?.proxyOpts
   )) as T
 
+  // Let the transaction propagate across the ethereum nodes. This is mostly to
+  // wait for all Alchemy nodes to catch up their state.
+  await contractInstance.deployTransaction.wait(1)
+
   log(
     `Deployed ${name} as ${opts?.proxyOpts?.kind || "transparent"} proxy at ${
       contractInstance.address
