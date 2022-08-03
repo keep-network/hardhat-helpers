@@ -59,7 +59,9 @@ describe("Ownable", function () {
       expect(this.hre.deployments.calls[0]).to.deep.equal({
         functionType: FunctionType.Read,
         contract: "TestContract",
-        options: { from: fromAddress },
+        options: {
+          from: fromAddress,
+        },
         methodName: "owner",
         args: [],
       })
@@ -67,7 +69,7 @@ describe("Ownable", function () {
       expect(this.hre.deployments.calls[1]).to.deep.equal({
         functionType: FunctionType.Execute,
         contract: "TestContract",
-        options: { from: fromAddress },
+        options: { from: fromAddress, log: true, waitConfirmations: 1 },
         methodName: "transferOwnership",
         args: [newOwnerAddress],
       })
@@ -93,7 +95,7 @@ describe("Ownable", function () {
       expect(this.hre.deployments.calls[1]).to.deep.equal({
         functionType: FunctionType.Execute,
         contract: "TestContract",
-        options: { from: fromAddress },
+        options: { from: fromAddress, log: true, waitConfirmations: 1 },
         methodName: "transferOwnership",
         args: [newOwnerAddress],
       })
