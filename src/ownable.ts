@@ -32,7 +32,7 @@ export async function transferOwnership(
 
     await deployments.execute(
       contractName,
-      { from },
+      { from: from, log: true, waitConfirmations: 1 },
       "transferOwnership",
       newOwnerAddress
     )

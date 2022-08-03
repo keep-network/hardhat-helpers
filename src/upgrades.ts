@@ -74,7 +74,7 @@ export async function deployProxy<T extends Contract>(
   log(
     `Deployed ${name} as ${opts?.proxyOpts?.kind || "transparent"} proxy at ${
       contractInstance.address
-    }`
+    } (tx: ${contractInstance.deployTransaction.hash})`
   )
 
   const artifact = artifacts.readArtifactSync(opts?.contractName || name)
@@ -83,14 +83,16 @@ export async function deployProxy<T extends Contract>(
     await upgrades.admin.getInstance()
   ).getProxyImplementation(contractInstance.address)
 
+  const transactionReceipt = await ethers.provider.getTransactionReceipt(
+    contractInstance.deployTransaction.hash
+  )
+
   const deployment: Deployment = {
     address: contractInstance.address,
     abi: artifact.abi,
     transactionHash: contractInstance.deployTransaction.hash,
     implementation: implementation,
-    receipt: await ethers.provider.getTransactionReceipt(
-      contractInstance.deployTransaction.hash
-    ),
+    receipt: transactionReceipt,
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     // args: opts?.initializerArgs,
