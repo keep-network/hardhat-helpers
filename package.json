@@ -23,7 +23,7 @@
   "devDependencies": {
     "@keep-network/prettier-config-keep": "github:keep-network/prettier-config-keep",
     "@nomiclabs/hardhat-ethers": "^2.1.0",
-    "@openzeppelin/hardhat-upgrades": "^1.19.0",
+    "@openzeppelin/hardhat-upgrades": "^1.20.0",
     "@types/chai": "^4.2.21",
     "@types/chai-as-promised": "^7.1.4",
     "@types/fs-extra": "^9.0.13",
@@ -46,7 +46,7 @@
   },
   "peerDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.0",
-    "@openzeppelin/hardhat-upgrades": "^1.19.0",
+    "@openzeppelin/hardhat-upgrades": "^1.20.0",
     "ethers": "^5.6.9",
     "hardhat": "^2.10.0",
     "hardhat-deploy": "^0.11.11"

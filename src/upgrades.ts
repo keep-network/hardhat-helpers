@@ -12,7 +12,7 @@ export interface HardhatUpgradesHelpers {
   deployProxy<T extends Contract>(
     name: string,
     opts?: UpgradesDeployOptions
-  ): Promise<T>
+  ): Promise<[T, Deployment]>
   upgradeProxy<T extends Contract>(
     currentContractName: string,
     newContractName: string,
@@ -45,7 +45,7 @@ export async function deployProxy<T extends Contract>(
   hre: HardhatRuntimeEnvironment,
   name: string,
   opts?: UpgradesDeployOptions
-): Promise<T> {
+): Promise<[T, Deployment]> {
   const { ethers, upgrades, deployments, artifacts } = hre
   const { log } = deployments
 
@@ -79,9 +79,10 @@ export async function deployProxy<T extends Contract>(
 
   const artifact = artifacts.readArtifactSync(opts?.contractName || name)
 
-  const implementation = await (
-    await upgrades.admin.getInstance()
-  ).getProxyImplementation(contractInstance.address)
+  const adminInstance = await upgrades.admin.getInstance()
+  const implementation = await adminInstance.getProxyImplementation(
+    contractInstance.address
+  )
 
   const transactionReceipt = await ethers.provider.getTransactionReceipt(
     contractInstance.deployTransaction.hash
@@ -100,7 +101,7 @@ export async function deployProxy<T extends Contract>(
 
   await deployments.save(name, deployment)
 
-  return contractInstance
+  return [contractInstance, deployment]
 }
 
 async function upgradeProxy<T extends Contract>(
