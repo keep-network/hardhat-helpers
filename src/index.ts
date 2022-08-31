@@ -9,6 +9,7 @@ import * as path from "path"
 import account from "./account"
 import * as address from "./address"
 import contracts from "./contracts"
+import etherscan from "./etherscan"
 import forking from "./forking"
 import * as number from "./number"
 import ownable from "./ownable"
@@ -37,6 +38,9 @@ extendEnvironment((hre) => {
       }),
       contracts: lazyObject(() => {
         return contracts(hre)
+      }),
+      etherscan: lazyObject(() => {
+        return etherscan(hre)
       }),
       forking: lazyObject(() => {
         return forking(hre)
@@ -97,6 +101,8 @@ task(TASK_PREPARE_ARTIFACTS)
     fs.copySync(sourceDir, destinationDir, {
       recursive: true,
     })
+
+    // TODO: Remove address for `hardhat` network.
 
     console.log(`${emoji("🙌 ")}Done!`)
   })
