@@ -96,7 +96,7 @@ export async function deployProxy<T extends Contract>(
     receipt: transactionReceipt,
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
-    // args: opts?.initializerArgs,
+    args: opts?.proxyOpts?.constructorArgs,
   }
 
   await deployments.save(name, deployment)
