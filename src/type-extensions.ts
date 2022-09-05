@@ -3,6 +3,7 @@ import "hardhat/types/runtime"
 import type { HardhatAccountHelpers } from "./account"
 import type { HardhatAddressHelpers } from "./address"
 import type { HardhatContractsHelpers } from "./contracts"
+import type { HardhatEtherscanHelpers } from "./etherscan"
 import type { HardhatOwnableHelpers } from "./ownable"
 import type { HardhatTimeHelpers } from "./time"
 import type { HardhatForkingHelpers } from "./forking"
@@ -21,6 +22,7 @@ export interface HardhatHelpers {
   account: HardhatAccountHelpers
   address: HardhatAddressHelpers
   contracts: HardhatContractsHelpers
+  etherscan: HardhatEtherscanHelpers
   forking: HardhatForkingHelpers
   number: HardhatNumberHelpers
   ownable: HardhatOwnableHelpers
