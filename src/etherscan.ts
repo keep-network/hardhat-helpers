@@ -34,7 +34,7 @@ async function verify(
     ) {
       console.log("Contract is already verified")
     } else {
-      throw err
+      console.error(err)
     }
   }
 }
