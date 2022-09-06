@@ -31,7 +31,8 @@ async function verify(
     if (err instanceof NomicLabsHardhatPluginError) {
       if (err.message.includes("Contract source code already verified")) {
         console.log("Contract is already verified")
-      }
+    } else {
+      throw err
     }
   }
 }
