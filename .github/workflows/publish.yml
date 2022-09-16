@@ -40,11 +40,26 @@ jobs:
           git config user.name Heimdall
           git config user.email thesis-heimdall@users.noreply.github.com
 
-      # On main merge or manual workflow dispatch publish a pre-release package.
-      # Automatically bump version based on the current version stored in package.json.
+      # On `main`` merge or manual workflow dispatch on `main` publish a
+      # pre-release package. Automatically bump version based on the current
+      # version stored in package.json.
       - name: Publish pre-release package
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        if: |
+          github.event_name == 'push'
+            || (github.event_name == 'workflow_dispatch'
+            && github.ref == 'main')
         run: yarn publish --non-interactive --prerelease --preid pre --message "Pre-release v%s [skip ci]" --tag "pre"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # On manual workflow dispatch on branch different than `main` publish a
+      # pre-release package without a tag. Automatically bump version based on
+      # the current version stored in package.json.
+      - name: Publish feature package
+        if: |
+          github.event_name == 'workflow_dispatch'
+            && github.ref != 'main'
+        run: yarn publish --non-interactive --prerelease --preid feature --no-git-tag-version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -57,5 +72,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push git commit
-        if: github.event_name != 'pull_request' && github.event_name != 'release'
+        if: |
+          github.event_name == 'push' 
+            || (github.event_name == 'workflow_dispatch'
+            && github.ref == 'main')
         run: git push
