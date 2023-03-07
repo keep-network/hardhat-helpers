@@ -1,12 +1,17 @@
 import "@openzeppelin/hardhat-upgrades"
 
 import type { Contract, ContractFactory } from "ethers"
-import type { FactoryOptions, HardhatRuntimeEnvironment } from "hardhat/types"
+import type {
+  Artifact,
+  FactoryOptions,
+  HardhatRuntimeEnvironment,
+} from "hardhat/types"
 import type { Deployment } from "hardhat-deploy/dist/types"
 import type {
   DeployProxyOptions,
   UpgradeProxyOptions,
 } from "@openzeppelin/hardhat-upgrades/src/utils/options"
+import type { TransactionReceipt } from "@ethersproject/abstract-provider"
 
 export interface HardhatUpgradesHelpers {
   deployProxy<T extends Contract>(
@@ -17,7 +22,7 @@ export interface HardhatUpgradesHelpers {
     currentContractName: string,
     newContractName: string,
     opts?: UpgradesUpgradeOptions
-  ): Promise<T>
+  ): Promise<[T, Deployment]>
 }
 
 export interface UpgradesDeployOptions {
@@ -104,26 +109,78 @@ export async function deployProxy<T extends Contract>(
   return [contractInstance, deployment]
 }
 
+/**
+ * Upgrades previously deployed contract.
+ *
+ * @param {HardhatRuntimeEnvironment} hre Hardhat runtime environment.
+ * @param {string} proxyDeploymentName Name of the proxy deployment that will be
+ *        upgraded.
+ * @param {string} newContractName Name of the new implementation contract.
+ * @param {UpgradesDeployOptions} opts
+ */
 async function upgradeProxy<T extends Contract>(
   hre: HardhatRuntimeEnvironment,
-  currentContractName: string,
+  proxyDeploymentName: string,
   newContractName: string,
   opts?: UpgradesUpgradeOptions
-): Promise<T> {
-  const { ethers, upgrades, deployments } = hre
+): Promise<[T, Deployment]> {
+  const { ethers, upgrades, deployments, artifacts } = hre
+  const { log } = deployments
 
-  const currentContract = await deployments.get(currentContractName)
+  const proxyDeployment: Deployment = await deployments.get(proxyDeploymentName)
 
-  const newContract = await ethers.getContractFactory(
+  const newContract: ContractFactory = await ethers.getContractFactory(
     opts?.contractName || newContractName,
     opts?.factoryOpts
   )
 
-  return upgrades.upgradeProxy(
-    currentContract.address,
+  const newContractInstance: T = (await upgrades.upgradeProxy(
+    proxyDeployment.address,
     newContract,
     opts?.proxyOpts
-  ) as Promise<T>
+  )) as T
+
+  // Let the transaction propagate across the ethereum nodes. This is mostly to
+  // wait for all Alchemy nodes to catch up their state.
+  await newContractInstance.deployTransaction.wait(1)
+
+  log(
+    `Upgraded ${proxyDeploymentName} proxy contract (address: ${proxyDeployment.address}) ` +
+      `in tx: ${newContractInstance.deployTransaction.hash}`
+  )
+
+  const artifact: Artifact = artifacts.readArtifactSync(
+    opts?.contractName || newContractName
+  )
+
+  const adminInstance: Contract = await upgrades.admin.getInstance()
+  const implementation: string = await adminInstance.getProxyImplementation(
+    newContractInstance.address
+  )
+
+  log(
+    `New ${proxyDeploymentName} proxy contract implementation address is: ${implementation}`
+  )
+
+  const transactionReceipt: TransactionReceipt =
+    await ethers.provider.getTransactionReceipt(
+      newContractInstance.deployTransaction.hash
+    )
+
+  const deployment: Deployment = {
+    address: newContractInstance.address,
+    abi: artifact.abi,
+    transactionHash: newContractInstance.deployTransaction.hash,
+    implementation: implementation,
+    receipt: transactionReceipt,
+    libraries: opts?.factoryOpts?.libraries,
+    devdoc: "Contract deployed as upgradable proxy",
+    args: opts?.proxyOpts?.constructorArgs,
+  }
+
+  await deployments.save(proxyDeploymentName, deployment)
+
+  return [newContractInstance, deployment]
 }
 
 export default function (
