@@ -104,6 +104,8 @@ extendConfig(
             path.join(config.paths.root, networkDestinationDir)
           )
         }
+
+        config.deploymentArtifactsExport[networkName] = networkDestinationDir
       }
     })
   }
