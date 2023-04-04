@@ -88,14 +88,14 @@ extendConfig(
 
     const networks = Object.keys(config.networks)
 
-    networks.forEach((value: string) => {
+    networks.forEach((networkName: string) => {
       if (
         exportUserConfig === undefined ||
-        exportUserConfig[value] === undefined
+        exportUserConfig[networkName] === undefined
       ) {
-        config.deploymentArtifactsExport[value] = defaultDestinationDir
+        config.deploymentArtifactsExport[networkName] = defaultDestinationDir
       } else {
-        let networkDestinationDir = exportUserConfig[value]!
+        let networkDestinationDir = exportUserConfig[networkName]!
 
         if (path.isAbsolute(networkDestinationDir)) {
           networkDestinationDir = networkDestinationDir
