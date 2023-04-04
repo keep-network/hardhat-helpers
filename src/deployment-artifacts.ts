@@ -17,17 +17,6 @@ export type DeploymentArtifactsExportConfig = {
 export function exportDeploymentArtifacts(hre: HardhatRuntimeEnvironment) {
   const networkName = hre.network.name
 
-  copyDeploymentArtifacts(hre, networkName)
-
-  // TODO: Remove address for `hardhat` network.
-
-  console.log(`${emoji("🙌 ")}Done!`)
-}
-
-function copyDeploymentArtifacts(
-  hre: HardhatRuntimeEnvironment,
-  networkName: string
-) {
   const sourceDir = path.join(hre.config.paths.deployments, networkName)
   const destinationDir = path.resolve(
     hre.config.deploymentArtifactsExport[networkName]
@@ -50,4 +39,8 @@ function copyDeploymentArtifacts(
   fs.copySync(sourceDir, destinationDir, {
     recursive: true,
   })
+
+  // TODO: Remove address for `hardhat` network.
+
+  console.log(`${emoji("🙌 ")}Done!`)
 }
