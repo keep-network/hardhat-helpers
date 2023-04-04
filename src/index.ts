@@ -116,13 +116,3 @@ export const TASK_EXPORT_DEPLOYMENT_ARTIFACTS = "export-deployment-artifacts"
 task(TASK_EXPORT_DEPLOYMENT_ARTIFACTS).setAction(async (args, hre) => {
   exportDeploymentArtifacts(hre)
 })
-
-export const TASK_PREPARE_ARTIFACTS = "prepare-artifacts" // deprecated
-
-task(TASK_PREPARE_ARTIFACTS).setAction(async (args, hre) => {
-  console.warn(
-    '"prepare-artifacts" task is deprecated; ' +
-      'please use "export-deployment-artifacts instead"'
-  )
-  exportDeploymentArtifacts(hre)
-})
