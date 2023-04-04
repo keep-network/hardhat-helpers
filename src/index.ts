@@ -113,6 +113,10 @@ extendConfig(
 
 export const TASK_EXPORT_DEPLOYMENT_ARTIFACTS = "export-deployment-artifacts"
 
-task(TASK_EXPORT_DEPLOYMENT_ARTIFACTS).setAction(async (args, hre) => {
-  exportDeploymentArtifacts(hre)
-})
+task(TASK_EXPORT_DEPLOYMENT_ARTIFACTS)
+  .setDescription(
+    "Exports deployment artifacts for the current network to a configured path"
+  )
+  .setAction(async (args, hre) => {
+    exportDeploymentArtifacts(hre)
+  })
