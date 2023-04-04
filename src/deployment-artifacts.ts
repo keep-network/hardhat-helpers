@@ -34,7 +34,13 @@ export function exportDeploymentArtifacts(hre: HardhatRuntimeEnvironment) {
   console.debug(`  Source:      ${sourceDir}\n  Destination: ${destinationDir}`)
 
   fs.ensureDirSync(destinationDir)
-  fs.emptyDirSync(destinationDir)
+
+  if (!isDirEmpty(destinationDir)) {
+    throw new HardhatPluginError(
+      "@keep-network/hardhat-helpers",
+      `destination dir is not empty [${destinationDir}]`
+    )
+  }
 
   fs.copySync(sourceDir, destinationDir, {
     recursive: true,
@@ -43,4 +49,10 @@ export function exportDeploymentArtifacts(hre: HardhatRuntimeEnvironment) {
   // TODO: Remove address for `hardhat` network.
 
   console.log(`${emoji("🙌 ")}Done!`)
+}
+
+function isDirEmpty(dirname: string): boolean {
+  const files = fs.readdirSync(dirname)
+
+  return files.length === 0
 }
