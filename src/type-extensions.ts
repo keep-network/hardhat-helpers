@@ -1,3 +1,4 @@
+import "hardhat/types/config"
 import "hardhat/types/runtime"
 
 import type { HardhatAccountHelpers } from "./account"
@@ -11,6 +12,20 @@ import type { HardhatNumberHelpers } from "./number"
 import type { HardhatSignersHelpers } from "./signers"
 import type { HardhatSnapshotHelpers } from "./snapshot"
 import type { HardhatUpgradesHelpers } from "./upgrades"
+import {
+  DeploymentArtifactsExportConfig,
+  DeploymentArtifactsExportUserConfig,
+} from "./deployment-artifacts"
+
+declare module "hardhat/types/config" {
+  export interface HardhatUserConfig {
+    deploymentArtifactsExport?: DeploymentArtifactsExportUserConfig
+  }
+
+  export interface HardhatConfig {
+    deploymentArtifactsExport: DeploymentArtifactsExportConfig
+  }
+}
 
 declare module "hardhat/types/runtime" {
   export interface HardhatRuntimeEnvironment {
