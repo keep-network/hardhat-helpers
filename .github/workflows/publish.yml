@@ -37,10 +37,10 @@ jobs:
       - name: Setup git credentials
         if: github.event_name != 'pull_request'
         run: |
-          git config user.name Heimdall
-          git config user.email thesis-heimdall@users.noreply.github.com
+          git config user.name Valkyrie
+          git config user.email valkyrie@thesis.co
 
-      # On `main`` merge or manual workflow dispatch on `main` publish a
+      # On `main` merge or manual workflow dispatch on `main` publish a
       # pre-release package. Automatically bump version based on the current
       # version stored in package.json.
       - name: Publish pre-release package
