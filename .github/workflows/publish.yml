@@ -38,7 +38,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           git config user.name Valkyrie
-          git config user.email 8324465+thesis-valkyrie@noreply.github.com
+          git config user.email 8324465+thesis-valkyrie@users.noreply.github.com
 
       # On `main` merge or manual workflow dispatch on `main` publish a
       # pre-release package. Automatically bump version based on the current
