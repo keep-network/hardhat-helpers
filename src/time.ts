@@ -1,7 +1,4 @@
-import { ethers } from "ethers"
-
 import type { Provider, JsonRpcProvider } from "@ethersproject/providers"
-import type { BigNumberish, BigNumber } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
 
 export interface HardhatTimeHelpers {
@@ -17,18 +14,18 @@ export interface HardhatTimeHelpers {
   lastBlockTime(): Promise<number>
   /**
    * Increases block timestamp by the specified time period.
-   * @param {BigNumberish} time Time period that should pass to the next mined block.
+   * @param {bigint} time Time period that should pass to the next mined block.
    * @return {number} Timestamp of the next block.
    */
-  increaseTime(time: BigNumberish): Promise<BigNumber>
+  increaseTime(time: number): Promise<number>
   /**
    * Mines specific number of blocks.
-   * @param {BigNumberish} blocks
+   * @param {number} blocks
    */
   mineBlocks(blocks: number): Promise<number>
   /**
    * Mines blocks to get to a specific block number.
-   * @param {BigNumberish} blocks
+   * @param {number} blocks
    */
   mineBlocksTo(blocks: number): Promise<number>
 }
@@ -54,17 +51,17 @@ export async function lastBlockTime(provider: Provider): Promise<number> {
 /**
  * Increases block timestamp by the specified time period.
  * @param {Provider} provider Ethers provider
- * @param {BigNumberish} time Time period that should pass to the next mined block.
+ * @param {number} time Time period that should pass to the next mined block.
  * @return {number} Timestamp of the next block.
  */
 export async function increaseTime(
   provider: JsonRpcProvider,
-  time: BigNumberish
-): Promise<BigNumber> {
+  time: number
+): Promise<number> {
   const lastBlock: number = await lastBlockTime(provider)
-  const expectedTime: BigNumber = ethers.BigNumber.from(lastBlock).add(time)
+  const expectedTime = lastBlock + time
 
-  await provider.send("evm_setNextBlockTimestamp", [expectedTime.toHexString()])
+  await provider.send("evm_setNextBlockTimestamp", [expectedTime])
   await provider.send("evm_mine", [])
 
   return expectedTime
@@ -115,12 +112,12 @@ export async function mineBlocksTo(
 }
 
 export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {
-  const provider = hre.ethers.provider
+  const provider = hre.ethers.provider as unknown as JsonRpcProvider
 
   return {
     lastBlockNumber: () => lastBlockNumber(provider),
     lastBlockTime: () => lastBlockTime(provider),
-    increaseTime: (time: BigNumberish) => increaseTime(provider, time),
+    increaseTime: (time: number) => increaseTime(provider, time),
     mineBlocks: (blocks: number) => mineBlocks(provider, blocks),
     mineBlocksTo: (targetBlock: number) => mineBlocksTo(provider, targetBlock),
   }

@@ -11,7 +11,7 @@ describe("snapshot helpers", function () {
 
   beforeEach(function () {
     snapshotHelpers = this.hre.helpers.snapshot
-    provider = this.hre.ethers.provider
+    provider = this.hre.ethers.provider as unknown as JsonRpcProvider
   })
 
   it("should create and restore snapshots properly", async () => {

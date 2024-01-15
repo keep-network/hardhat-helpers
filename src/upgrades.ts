@@ -11,7 +11,6 @@ import type {
   DeployProxyOptions,
   UpgradeProxyOptions,
 } from "@openzeppelin/hardhat-upgrades/src/utils/options"
-import type { TransactionReceipt } from "@ethersproject/abstract-provider"
 
 export interface HardhatUpgradesHelpers {
   deployProxy<T extends Contract>(
@@ -74,31 +73,44 @@ export async function deployProxy<T extends Contract>(
 
   // Let the transaction propagate across the ethereum nodes. This is mostly to
   // wait for all Alchemy nodes to catch up their state.
-  await contractInstance.deployTransaction.wait(1)
+  await contractInstance.deploymentTransaction()?.wait(1)
+
+  const contractAddress = await contractInstance.getAddress()
 
   log(
-    `Deployed ${name} as ${opts?.proxyOpts?.kind || "transparent"} proxy at ${
-      contractInstance.address
-    } (tx: ${contractInstance.deployTransaction.hash})`
+    `Deployed ${name} as ${
+      opts?.proxyOpts?.kind || "transparent"
+    } proxy at ${contractAddress} (tx: ${
+      contractInstance.deploymentTransaction()?.hash
+    })`
   )
 
   const artifact = artifacts.readArtifactSync(opts?.contractName || name)
 
-  const adminInstance = await upgrades.admin.getInstance()
-  const implementation = await adminInstance.getProxyImplementation(
-    contractInstance.address
+  const implementation = await upgrades.erc1967.getImplementationAddress(
+    contractAddress
   )
 
-  const transactionReceipt = await ethers.provider.getTransactionReceipt(
-    contractInstance.deployTransaction.hash
-  )
+  const transactionHash = contractInstance.deploymentTransaction()?.hash
+
+  const transactionReceipt = transactionHash
+    ? await hre.ethers.provider.getTransactionReceipt(transactionHash)
+    : null
+
+  if (!transactionReceipt) {
+    throw new Error(
+      `Could not find transaction receipt for transaction hash: ${transactionHash}`
+    )
+  }
 
   const deployment: Deployment = {
-    address: contractInstance.address,
+    address: contractAddress,
     abi: artifact.abi,
-    transactionHash: contractInstance.deployTransaction.hash,
+    transactionHash,
     implementation: implementation,
+    // @ts-ignore-next-line 
     receipt: transactionReceipt,
+    // @ts-ignore-next-line 
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
@@ -142,37 +154,47 @@ async function upgradeProxy<T extends Contract>(
 
   // Let the transaction propagate across the ethereum nodes. This is mostly to
   // wait for all Alchemy nodes to catch up their state.
-  await newContractInstance.deployTransaction.wait(1)
+  await newContractInstance.deploymentTransaction()?.wait(1)
+
+  const contractAddress = await newContractInstance.getAddress()
 
   log(
     `Upgraded ${proxyDeploymentName} proxy contract (address: ${proxyDeployment.address}) ` +
-      `in tx: ${newContractInstance.deployTransaction.hash}`
+      `in tx: ${newContractInstance.deploymentTransaction()?.hash}`
   )
 
   const artifact: Artifact = artifacts.readArtifactSync(
     opts?.contractName || newContractName
   )
 
-  const adminInstance: Contract = await upgrades.admin.getInstance()
-  const implementation: string = await adminInstance.getProxyImplementation(
-    newContractInstance.address
+  const implementation = await upgrades.erc1967.getImplementationAddress(
+    contractAddress
   )
 
   log(
     `New ${proxyDeploymentName} proxy contract implementation address is: ${implementation}`
   )
 
-  const transactionReceipt: TransactionReceipt =
-    await ethers.provider.getTransactionReceipt(
-      newContractInstance.deployTransaction.hash
+  const transactionHash = newContractInstance.deploymentTransaction()?.hash
+
+  const transactionReceipt = transactionHash
+    ? await hre.ethers.provider.getTransactionReceipt(transactionHash)
+    : null
+
+  if (!transactionReceipt) {
+    throw new Error(
+      `Could not find transaction receipt for transaction hash: ${transactionHash}`
     )
+  }
 
   const deployment: Deployment = {
-    address: newContractInstance.address,
+    address: contractAddress,
     abi: artifact.abi,
-    transactionHash: newContractInstance.deployTransaction.hash,
+    transactionHash: transactionHash,
     implementation: implementation,
+    // @ts-ignore-next-line 
     receipt: transactionReceipt,
+    // @ts-ignore-next-line 
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,

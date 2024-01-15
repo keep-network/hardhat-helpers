@@ -31,7 +31,7 @@ export async function restoreSnapshot(
 export default function (
   hre: HardhatRuntimeEnvironment
 ): HardhatSnapshotHelpers {
-  const provider = hre.ethers.provider
+  const provider = hre.ethers.provider as unknown as JsonRpcProvider
 
   return {
     createSnapshot: () => createSnapshot(provider),
