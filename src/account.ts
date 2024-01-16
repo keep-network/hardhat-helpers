@@ -2,6 +2,7 @@ import "@nomicfoundation/hardhat-ethers"
 
 import { parseUnits, parseEther, Signer } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
 
 export type FundOptions = {
   from: Signer
@@ -13,7 +14,7 @@ export interface HardhatAccountHelpers {
   impersonateAccount(
     accountAddress: string,
     fundOptions?: FundOptions
-  ): Promise<Signer>
+  ): Promise<SignerWithAddress>
 }
 
 async function impersonateAccount(

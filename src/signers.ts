@@ -1,19 +1,19 @@
-import { Signer } from "ethers"
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
 
 type NamedSigners = {
-  [name: string]: Signer
+  [name: string]: SignerWithAddress
 }
 
 export interface HardhatSignersHelpers {
   getNamedSigners(): Promise<NamedSigners>
-  getUnnamedSigners(): Promise<Signer[]>
+  getUnnamedSigners(): Promise<SignerWithAddress[]>
 }
 
 async function getNamedSigners(
   hre: HardhatRuntimeEnvironment
 ): Promise<NamedSigners> {
-  const namedSigners: { [name: string]: Signer } = {}
+  const namedSigners: { [name: string]: SignerWithAddress } = {}
 
   await Promise.all(
     Object.entries(await hre.getNamedAccounts()).map(
@@ -28,8 +28,8 @@ async function getNamedSigners(
 
 async function getUnnamedSigners(
   hre: HardhatRuntimeEnvironment
-): Promise<Signer[]> {
-  const unnamedSigners: Signer[] = []
+): Promise<SignerWithAddress[]> {
+  const unnamedSigners: SignerWithAddress[] = []
 
   await Promise.all(
     (
