@@ -59,7 +59,7 @@ extendEnvironment((hre) => {
         return signers(hre)
       }),
       snapshot: lazyObject(() => {
-        return snapshot(hre)
+        return snapshot()
       }),
       upgrades: lazyObject(() => {
         return upgrades(hre)
