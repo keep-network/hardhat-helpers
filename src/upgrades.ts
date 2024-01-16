@@ -26,7 +26,7 @@ export interface HardhatUpgradesHelpers {
 }
 
 type CustomFactoryOptions = FactoryOptions & {
-  libraries: Libraries
+  libraries?: Libraries
 }
 
 export interface UpgradesDeployOptions {
