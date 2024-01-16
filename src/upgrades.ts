@@ -11,6 +11,7 @@ import type {
   DeployProxyOptions,
   UpgradeProxyOptions,
 } from "@openzeppelin/hardhat-upgrades/src/utils/options"
+import { Libraries } from "hardhat-deploy/types"
 
 export interface HardhatUpgradesHelpers {
   deployProxy<T extends Contract>(
@@ -24,17 +25,21 @@ export interface HardhatUpgradesHelpers {
   ): Promise<[T, Deployment]>
 }
 
+type CustomFactoryOptions = FactoryOptions & {
+  libraries: Libraries
+}
+
 export interface UpgradesDeployOptions {
   contractName?: string
   initializerArgs?: unknown[]
-  factoryOpts?: FactoryOptions
+  factoryOpts?: CustomFactoryOptions
   proxyOpts?: DeployProxyOptions
 }
 
 export interface UpgradesUpgradeOptions {
   contractName?: string
   initializerArgs?: unknown[]
-  factoryOpts?: FactoryOptions
+  factoryOpts?: CustomFactoryOptions
   proxyOpts?: UpgradeProxyOptions
 }
 
@@ -110,7 +115,6 @@ export async function deployProxy<T extends Contract>(
     implementation: implementation,
     // @ts-ignore-next-line 
     receipt: transactionReceipt,
-    // @ts-ignore-next-line 
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
@@ -194,7 +198,6 @@ async function upgradeProxy<T extends Contract>(
     implementation: implementation,
     // @ts-ignore-next-line 
     receipt: transactionReceipt,
-    // @ts-ignore-next-line 
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
