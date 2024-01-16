@@ -76,18 +76,19 @@ export async function deployProxy<T extends Contract>(
     opts?.proxyOpts
   )) as T
 
+  const deploymentTransaction = contractInstance.deploymentTransaction()
+
   // Let the transaction propagate across the ethereum nodes. This is mostly to
   // wait for all Alchemy nodes to catch up their state.
-  await contractInstance.deploymentTransaction()?.wait(1)
+  const transactionReceipt = await deploymentTransaction?.wait(1)
 
   const contractAddress = await contractInstance.getAddress()
+  const transactionHash = deploymentTransaction?.hash
 
   log(
     `Deployed ${name} as ${
       opts?.proxyOpts?.kind || "transparent"
-    } proxy at ${contractAddress} (tx: ${
-      contractInstance.deploymentTransaction()?.hash
-    })`
+    } proxy at ${contractAddress} (tx: ${transactionHash})`
   )
 
   const artifact = artifacts.readArtifactSync(opts?.contractName || name)
@@ -96,13 +97,7 @@ export async function deployProxy<T extends Contract>(
     contractAddress
   )
 
-  const transactionHash = contractInstance.deploymentTransaction()?.hash
-
-  const transactionReceipt = transactionHash
-    ? await hre.ethers.provider.getTransactionReceipt(transactionHash)
-    : null
-
-  if (!transactionReceipt) {
+  if (!transactionReceipt || !transactionHash) {
     throw new Error(
       `Could not find transaction receipt for transaction hash: ${transactionHash}`
     )
@@ -113,8 +108,8 @@ export async function deployProxy<T extends Contract>(
     abi: artifact.abi,
     transactionHash,
     implementation: implementation,
-    // @ts-ignore-next-line 
-    receipt: transactionReceipt,
+    // TODO: transactionReceipt type is not compatible with Deployment types
+    // receipt: transactionReceipt,
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
@@ -196,8 +191,8 @@ async function upgradeProxy<T extends Contract>(
     abi: artifact.abi,
     transactionHash: transactionHash,
     implementation: implementation,
-    // @ts-ignore-next-line 
-    receipt: transactionReceipt,
+    // TODO: transactionReceipt type is not compatible with Deployment types
+    // receipt: transactionReceipt,
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
