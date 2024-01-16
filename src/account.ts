@@ -2,7 +2,7 @@ import "@nomicfoundation/hardhat-ethers"
 
 import { parseUnits, parseEther, Signer } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
-import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers"
 
 export type FundOptions = {
   from: Signer
