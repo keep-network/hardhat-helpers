@@ -108,8 +108,6 @@ export async function deployProxy<T extends Contract>(
     abi: artifact.abi,
     transactionHash: transactionHash,
     implementation: implementation,
-    // TODO: transactionReceipt type is not compatible with Deployment types
-    // receipt: transactionReceipt,
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
@@ -188,8 +186,6 @@ async function upgradeProxy<T extends Contract>(
     abi: artifact.abi,
     transactionHash: transactionHash,
     implementation: implementation,
-    // TODO: transactionReceipt type is not compatible with Deployment types
-    // receipt: transactionReceipt,
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
