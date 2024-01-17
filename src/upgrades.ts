@@ -151,15 +151,18 @@ async function upgradeProxy<T extends Contract>(
     opts?.proxyOpts
   )) as T
 
+  const deploymentTransaction = newContractInstance.deploymentTransaction()
+
   // Let the transaction propagate across the ethereum nodes. This is mostly to
   // wait for all Alchemy nodes to catch up their state.
-  await newContractInstance.deploymentTransaction()?.wait(1)
+  const transactionReceipt = await deploymentTransaction?.wait(1)
 
   const contractAddress = await newContractInstance.getAddress()
+  const transactionHash = deploymentTransaction?.hash
 
   log(
     `Upgraded ${proxyDeploymentName} proxy contract (address: ${proxyDeployment.address}) ` +
-      `in tx: ${newContractInstance.deploymentTransaction()?.hash}`
+      `in tx: ${transactionHash}`
   )
 
   const artifact: Artifact = artifacts.readArtifactSync(
@@ -174,13 +177,7 @@ async function upgradeProxy<T extends Contract>(
     `New ${proxyDeploymentName} proxy contract implementation address is: ${implementation}`
   )
 
-  const transactionHash = newContractInstance.deploymentTransaction()?.hash
-
-  const transactionReceipt = transactionHash
-    ? await hre.ethers.provider.getTransactionReceipt(transactionHash)
-    : null
-
-  if (!transactionReceipt) {
+  if (!transactionReceipt || !transactionHash) {
     throw new Error(
       `Could not find transaction receipt for transaction hash: ${transactionHash}`
     )
