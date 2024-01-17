@@ -53,7 +53,7 @@ extendEnvironment((hre) => {
         return ownable(hre)
       }),
       time: lazyObject(() => {
-        return time(hre)
+        return time()
       }),
       signers: lazyObject(() => {
         return signers(hre)
