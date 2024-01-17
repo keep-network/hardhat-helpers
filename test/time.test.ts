@@ -1,6 +1,5 @@
 import { useEnvironment } from "./helpers"
 
-import type { BigNumber } from "ethers"
 import type { HardhatTimeHelpers } from "../src/time"
 
 import chai from "chai"
@@ -24,21 +23,18 @@ describe("time helpers", function () {
 
     describe("increaseTime function", function () {
       const time: number = 145607
-      let expectedTime: BigNumber
-      let result: BigNumber
+      let expectedTime: number
+      let result: number
 
       beforeEach(async function () {
-        expectedTime = this.hre.ethers.BigNumber.from(
-          await timeHelpers.lastBlockTime()
-        ).add(time)
+        const latestBlockTime = await timeHelpers.lastBlockTime()
+        expectedTime = latestBlockTime + time
 
         result = await timeHelpers.increaseTime(time)
       })
 
       it("should increase latest block timestamp", async function () {
-        expect(await timeHelpers.lastBlockTime()).to.be.equal(
-          expectedTime.toNumber()
-        )
+        expect(await timeHelpers.lastBlockTime()).to.be.equal(expectedTime)
       })
 
       it("should return increased block timestamp", async function () {
@@ -52,9 +48,8 @@ describe("time helpers", function () {
       let result: number
 
       beforeEach(async function () {
-        const currentBlockNumber = (
-          await this.hre.ethers.provider.getBlock("latest")
-        ).number
+        const currentBlockNumber =
+          (await this.hre.ethers.provider.getBlock("latest"))?.number ?? 0
         expectedBlockNumber = currentBlockNumber + blocksToMine
 
         result = await timeHelpers.mineBlocks(blocksToMine)
@@ -62,7 +57,7 @@ describe("time helpers", function () {
 
       it("should mine blocks", async function () {
         expect(
-          (await this.hre.ethers.provider.getBlock("latest")).number
+          (await this.hre.ethers.provider.getBlock("latest"))?.number
         ).to.be.eq(expectedBlockNumber)
       })
 
@@ -75,8 +70,8 @@ describe("time helpers", function () {
       let currentBlockNumber: number
 
       beforeEach(async function () {
-        currentBlockNumber = (await this.hre.ethers.provider.getBlock("latest"))
-          .number
+        currentBlockNumber =
+          (await this.hre.ethers.provider.getBlock("latest"))?.number ?? 0
       })
 
       it("should complete if target blcok number is greater than the latest block number", async function () {
@@ -90,7 +85,7 @@ describe("time helpers", function () {
         ).to.eq(targetBlock)
 
         expect(
-          (await this.hre.ethers.provider.getBlock("latest")).number,
+          (await this.hre.ethers.provider.getBlock("latest"))?.number,
           "latest block number is not target block number"
         ).to.be.eq(targetBlock)
       })
@@ -106,7 +101,7 @@ describe("time helpers", function () {
         ).to.eq(targetBlock)
 
         expect(
-          (await this.hre.ethers.provider.getBlock("latest")).number,
+          (await this.hre.ethers.provider.getBlock("latest"))?.number,
           "latest block number is not target block number"
         ).to.be.eq(targetBlock)
       })

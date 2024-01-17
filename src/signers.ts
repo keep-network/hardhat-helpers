@@ -1,5 +1,5 @@
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
-import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 
 type NamedSigners = {
   [name: string]: SignerWithAddress

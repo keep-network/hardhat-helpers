@@ -1,9 +1,8 @@
-import { ethers } from "ethers"
-
-import type { Provider, JsonRpcProvider } from "@ethersproject/providers"
-import type { BigNumberish, BigNumber } from "ethers"
-import type { HardhatRuntimeEnvironment } from "hardhat/types"
-
+import {
+  mine,
+  mineUpTo,
+  time as timeHelpers,
+} from "@nomicfoundation/hardhat-network-helpers"
 export interface HardhatTimeHelpers {
   /**
    * Returns number of the latest block.
@@ -17,111 +16,82 @@ export interface HardhatTimeHelpers {
   lastBlockTime(): Promise<number>
   /**
    * Increases block timestamp by the specified time period.
-   * @param {BigNumberish} time Time period that should pass to the next mined block.
+   * @param {bigint} time Time period that should pass to the next mined block.
    * @return {number} Timestamp of the next block.
    */
-  increaseTime(time: BigNumberish): Promise<BigNumber>
+  increaseTime(time: number): Promise<number>
   /**
    * Mines specific number of blocks.
-   * @param {BigNumberish} blocks
+   * @param {number} blocks
    */
   mineBlocks(blocks: number): Promise<number>
   /**
    * Mines blocks to get to a specific block number.
-   * @param {BigNumberish} blocks
+   * @param {number} blocks
    */
   mineBlocksTo(blocks: number): Promise<number>
 }
 
 /**
  * Returns number of the latest block.
- * @param {Provider} provider Ethers provider
  * @return {number} Latest block number.
  */
-async function lastBlockNumber(provider: Provider): Promise<number> {
-  return (await provider.getBlock("latest")).number
+async function lastBlockNumber(): Promise<number> {
+  return await timeHelpers.latestBlock()
 }
 
 /**
  * Returns timestamp of the latest block.
- * @param {Provider} provider Ethers provider
  * @return {number} Latest block timestamp.
  */
-export async function lastBlockTime(provider: Provider): Promise<number> {
-  return (await provider.getBlock("latest")).timestamp
+export async function lastBlockTime(): Promise<number> {
+  return await timeHelpers.latest()
 }
 
 /**
  * Increases block timestamp by the specified time period.
- * @param {Provider} provider Ethers provider
- * @param {BigNumberish} time Time period that should pass to the next mined block.
+ * @param {number} time Time period that should pass to the next mined block.
  * @return {number} Timestamp of the next block.
  */
-export async function increaseTime(
-  provider: JsonRpcProvider,
-  time: BigNumberish
-): Promise<BigNumber> {
-  const lastBlock: number = await lastBlockTime(provider)
-  const expectedTime: BigNumber = ethers.BigNumber.from(lastBlock).add(time)
-
-  await provider.send("evm_setNextBlockTimestamp", [expectedTime.toHexString()])
-  await provider.send("evm_mine", [])
-
-  return expectedTime
+export async function increaseTime(time: number): Promise<number> {
+  return await timeHelpers.increase(time)
 }
 
 /**
  * Mines specific number of blocks.
- * @param {JsonRpcProvider} provider Ethers provider
  * @param {number} blocks
  * @return {number} Latest block number.
  */
-export async function mineBlocks(
-  provider: JsonRpcProvider,
-  blocks: number
-): Promise<number> {
-  for (let i = 0; i < blocks; i++) {
-    await provider.send("evm_mine", [])
-  }
+export async function mineBlocks(blocks: number): Promise<number> {
+  await mine(blocks)
 
-  return (await provider.getBlock("latest")).number
+  return await timeHelpers.latestBlock()
 }
 
 /**
  * Mines blocks to get to the specific target block number.
- * @param {JsonRpcProvider} provider Ethers provider
  * @param {number} targetBlock
  * @return {number} Latest block number.
  * @throws Will throw an error if target block already passed.
  */
-export async function mineBlocksTo(
-  provider: JsonRpcProvider,
-  targetBlock: number
-): Promise<number> {
-  const lastBlockNumber: number = (await provider.getBlock("latest")).number
+export async function mineBlocksTo(targetBlock: number): Promise<number> {
+  const latest = await timeHelpers.latestBlock()
 
-  if (targetBlock < lastBlockNumber)
-    throw new Error(
-      `target block number already passed; latest block number is [${lastBlockNumber}]`
-    )
-
-  const blocksToMine = targetBlock - lastBlockNumber
-
-  for (let i = 0; i < blocksToMine; i++) {
-    await provider.send("evm_mine", [])
+  if (targetBlock === latest) {
+    return latest
   }
 
-  return (await provider.getBlock("latest")).number
+  await mineUpTo(targetBlock)
+
+  return await timeHelpers.latestBlock()
 }
 
-export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {
-  const provider = hre.ethers.provider
-
+export default function (): HardhatTimeHelpers {
   return {
-    lastBlockNumber: () => lastBlockNumber(provider),
-    lastBlockTime: () => lastBlockTime(provider),
-    increaseTime: (time: BigNumberish) => increaseTime(provider, time),
-    mineBlocks: (blocks: number) => mineBlocks(provider, blocks),
-    mineBlocksTo: (targetBlock: number) => mineBlocksTo(provider, targetBlock),
+    lastBlockNumber: () => lastBlockNumber(),
+    lastBlockTime: () => lastBlockTime(),
+    increaseTime: (time: number) => increaseTime(time),
+    mineBlocks: (blocks: number) => mineBlocks(blocks),
+    mineBlocksTo: (targetBlock: number) => mineBlocksTo(targetBlock),
   }
 }

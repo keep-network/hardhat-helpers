@@ -19,21 +19,21 @@ export interface HardhatAddressHelpers {
  * @throws {HardhatPluginError} Throws an error if address is a zero address.
  */
 export function validate(address: string): string {
-  if (!ethers.utils.isAddress(address)) {
+  if (!ethers.isAddress(address)) {
     throw new HardhatPluginError(
       "@keep-network/hardhat-helpers",
       `address ${address} is not a valid address`
     )
   }
 
-  if (ethers.utils.getAddress(address) === ethers.constants.AddressZero) {
+  if (ethers.getAddress(address) === ethers.ZeroAddress) {
     throw new HardhatPluginError(
       "@keep-network/hardhat-helpers",
       `address is a zero address`
     )
   }
 
-  return ethers.utils.getAddress(address)
+  return ethers.getAddress(address)
 }
 
 /**
@@ -65,5 +65,5 @@ export function equal(address1: string, address2: string): boolean {
   validate(address1)
   validate(address2)
 
-  return ethers.utils.getAddress(address1) === ethers.utils.getAddress(address2)
+  return ethers.getAddress(address1) === ethers.getAddress(address2)
 }

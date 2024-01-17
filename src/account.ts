@@ -1,12 +1,12 @@
-import "@nomiclabs/hardhat-ethers"
+import "@nomicfoundation/hardhat-ethers"
 
-import type { BigNumberish, BigNumber, Signer } from "ethers"
+import { parseUnits, parseEther, Signer } from "ethers"
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
-import type { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers"
 
 export type FundOptions = {
   from: Signer
-  value?: BigNumberish
+  value?: bigint
   unit?: string
 }
 
@@ -33,16 +33,11 @@ async function impersonateAccount(
     // In case the account represents a contract, keep in mind the contract must
     // have a receive or fallback method to be funded successfully.
 
-    let fundingValue: BigNumber
+    let fundingValue: bigint
     if (fundOptions.unit) {
-      fundingValue = hre.ethers.utils.parseUnits(
-        fundOptions.value!.toString(),
-        fundOptions.unit
-      )
+      fundingValue = parseUnits(fundOptions.value!.toString(), fundOptions.unit)
     } else {
-      fundingValue = hre.ethers.utils.parseEther(
-        fundOptions.value?.toString() || "1"
-      )
+      fundingValue = parseEther(fundOptions.value?.toString() || "1")
     }
 
     await fundOptions.from.sendTransaction({

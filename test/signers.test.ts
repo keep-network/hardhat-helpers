@@ -3,7 +3,7 @@ import { expect } from "chai"
 import { useEnvironment } from "./helpers"
 
 import type { HardhatSignersHelpers } from "./signers"
-import type { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types"
+import type { HardhatEthersHelpers } from "@nomicfoundation/hardhat-ethers/types"
 import type { ethers as ethersT } from "ethers"
 
 describe("signers", () => {
@@ -20,16 +20,18 @@ describe("signers", () => {
   describe("getNamedSigners", () => {
     it("should return named signers", async () => {
       const { deployer, governance } = await signers.getNamedSigners()
+      const deployerAddress = await deployer.getAddress()
+      const governanceAddress = await governance.getAddress()
 
-      expect(ethers.utils.isAddress(deployer.address)).to.be.true
+      expect(ethers.isAddress(deployerAddress)).to.be.true
 
-      expect(deployer.address).to.be.not.equal(ethers.constants.AddressZero)
+      expect(deployerAddress).to.be.not.equal(ethers.ZeroAddress)
 
-      expect(ethers.utils.isAddress(governance.address)).to.be.true
+      expect(ethers.isAddress(governanceAddress)).to.be.true
 
-      expect(governance.address).to.be.not.equal(ethers.constants.AddressZero)
+      expect(governanceAddress).to.be.not.equal(ethers.ZeroAddress)
 
-      expect(governance.address).to.be.not.equal(deployer.address)
+      expect(governanceAddress).to.be.not.equal(deployerAddress)
     })
   })
 
@@ -42,7 +44,7 @@ describe("signers", () => {
 
       // eslint-disable-next-line no-restricted-syntax
       for (const namedSigner of Object.values(namedSigners)) {
-        expect(unnamedSigners).to.not.contain(namedSigner.address)
+        expect(unnamedSigners).to.not.contain(await namedSigner.getAddress())
       }
     })
   })
