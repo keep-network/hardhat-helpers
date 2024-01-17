@@ -106,7 +106,7 @@ export async function deployProxy<T extends Contract>(
   const deployment: Deployment = {
     address: contractAddress,
     abi: artifact.abi,
-    transactionHash,
+    transactionHash: transactionHash,
     implementation: implementation,
     // TODO: transactionReceipt type is not compatible with Deployment types
     // receipt: transactionReceipt,
