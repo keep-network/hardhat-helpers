@@ -1,4 +1,8 @@
-import { mine, mineUpTo, time as timeHelpers } from "@nomicfoundation/hardhat-network-helpers";
+import {
+  mine,
+  mineUpTo,
+  time as timeHelpers,
+} from "@nomicfoundation/hardhat-network-helpers"
 export interface HardhatTimeHelpers {
   /**
    * Returns number of the latest block.
@@ -49,9 +53,7 @@ export async function lastBlockTime(): Promise<number> {
  * @param {number} time Time period that should pass to the next mined block.
  * @return {number} Timestamp of the next block.
  */
-export async function increaseTime(
-  time: number
-): Promise<number> {
+export async function increaseTime(time: number): Promise<number> {
   return await timeHelpers.increase(time)
 }
 
@@ -60,9 +62,7 @@ export async function increaseTime(
  * @param {number} blocks
  * @return {number} Latest block number.
  */
-export async function mineBlocks(
-  blocks: number
-): Promise<number> {
+export async function mineBlocks(blocks: number): Promise<number> {
   await mine(blocks)
 
   return await timeHelpers.latestBlock()
@@ -74,9 +74,7 @@ export async function mineBlocks(
  * @return {number} Latest block number.
  * @throws Will throw an error if target block already passed.
  */
-export async function mineBlocksTo(
-  targetBlock: number
-): Promise<number> {
+export async function mineBlocksTo(targetBlock: number): Promise<number> {
   const latest = await timeHelpers.latestBlock()
 
   if (targetBlock === latest) {
