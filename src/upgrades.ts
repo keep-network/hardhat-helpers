@@ -1,6 +1,10 @@
 import "@openzeppelin/hardhat-upgrades"
 
-import type { Contract, ContractFactory } from "ethers"
+import type {
+  Contract,
+  ContractFactory,
+  ContractTransactionResponse,
+} from "ethers"
 import type {
   Artifact,
   FactoryOptions,
@@ -149,7 +153,11 @@ async function upgradeProxy<T extends Contract>(
     opts?.proxyOpts
   )) as T
 
-  const deploymentTransaction = newContractInstance.deploymentTransaction()
+  // This is a workaround to get the deployment transaction. The upgradeProxy attaches
+  // the deployment transaction to the field under a different name than ethers
+  // contract.deploymentTransaction() function expects.
+  const deploymentTransaction =
+    newContractInstance.deployTransaction as unknown as ContractTransactionResponse
 
   // Let the transaction propagate across the ethereum nodes. This is mostly to
   // wait for all Alchemy nodes to catch up their state.
