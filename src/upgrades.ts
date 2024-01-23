@@ -156,6 +156,8 @@ async function upgradeProxy<T extends Contract>(
   // This is a workaround to get the deployment transaction. The upgradeProxy attaches
   // the deployment transaction to the field under a different name than ethers
   // contract.deploymentTransaction() function expects.
+  // TODO: Remove this workaround once the issue is fixed on the OpenZeppelin side.
+  // Tracked in: https://github.com/keep-network/hardhat-helpers/issues/49
   const deploymentTransaction =
     newContractInstance.deployTransaction as unknown as ContractTransactionResponse
 
