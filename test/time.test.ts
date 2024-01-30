@@ -1,10 +1,23 @@
 import { useEnvironment } from "./helpers"
 
 import type { HardhatTimeHelpers } from "../src/time"
+import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers"
+import type { HardhatEthersHelpers } from "@nomicfoundation/hardhat-ethers/types"
+import type { ethers as ethersT } from "ethers"
+
+import { mine } from "@nomicfoundation/hardhat-network-helpers"
 
 import chai from "chai"
 chai.use(require("chai-as-promised"))
 const { expect } = chai
+
+function timeout(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("Timed out after " + ms + " ms")
+    }, ms)
+  })
+}
 
 describe("time helpers", function () {
   context("default hardhat project", function () {
@@ -112,6 +125,51 @@ describe("time helpers", function () {
         expect(timeHelpers.mineBlocksTo(targetBlock)).to.be.rejectedWith(
           `target block number [${targetBlock}] already passed; latest block number is [${currentBlockNumber}]`
         )
+      })
+    })
+
+    describe("waitForTransaction function", function () {
+      let currentBlockNumber: number
+      let ethers: typeof ethersT & HardhatEthersHelpers
+      let signer: HardhatEthersSigner
+      let transactionResponse: ethersT.TransactionResponse
+
+      beforeEach(async function () {
+        ethers = this.hre.ethers
+        signer = (await ethers.getSigners())[0]
+
+        const tx = {
+          to: signer.address, // Sending the transaction to the signer's own address
+          value: ethers.parseEther("0.01"), // Small amount of Ether, can also be 0
+        }
+        transactionResponse = await signer.sendTransaction(tx)
+      })
+
+      it("returns immediately on hardhat", async function () {
+        const waitResult = await Promise.race([
+          timeHelpers.waitForTransaction(transactionResponse.hash, 5),
+          timeout(300),
+        ])
+        expect(waitResult).to.be.true
+      })
+
+      it("does not return immediately on non-hardhat networks", async function () {
+        this.hre.network.name = "not-hardhat"
+        const waitResult = await Promise.race([
+          timeHelpers.waitForTransaction(transactionResponse.hash, 5),
+          timeout(1000),
+        ])
+        expect(waitResult).to.equal("Timed out after 1000 ms")
+      })
+
+      it("returns after the transaction is mined", async function () {
+        this.hre.network.name = "not-hardhat"
+        await mine(6)
+        const waitResult = await Promise.race([
+          timeHelpers.waitForTransaction(transactionResponse.hash, 5),
+          timeout(1000),
+        ])
+        expect(waitResult).to.be.true
       })
     })
   })

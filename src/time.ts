@@ -1,3 +1,4 @@
+import { HardhatRuntimeEnvironment } from "hardhat/types"
 import {
   mine,
   mineUpTo,
@@ -30,6 +31,8 @@ export interface HardhatTimeHelpers {
    * @param {number} blocks
    */
   mineBlocksTo(blocks: number): Promise<number>
+
+  waitForTransaction(txHash: string, confirmations?: number): Promise<boolean>
 }
 
 /**
@@ -86,12 +89,41 @@ export async function mineBlocksTo(targetBlock: number): Promise<number> {
   return await timeHelpers.latestBlock()
 }
 
-export default function (): HardhatTimeHelpers {
+export async function waitForTransaction(
+  hre: HardhatRuntimeEnvironment,
+  txHash: string,
+  confirmations?: number = 1
+): Promise<boolean> {
+  if (hre.network.name === "hardhat") {
+    return true
+  }
+
+  const { provider } = hre.ethers
+  const transaction = await provider.getTransaction(txHash)
+  if (!transaction) {
+    throw new Error(`Transaction ${txHash} not found`)
+  }
+
+  let currentConfirmations = await transaction.confirmations()
+  while (currentConfirmations < confirmations) {
+    // wait 1s between each check to save API compute units
+    // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    // eslint-disable-next-line no-await-in-loop
+    currentConfirmations = await transaction.confirmations()
+  }
+
+  return true
+}
+
+export default function (hre: HardhatRuntimeEnvironment): HardhatTimeHelpers {
   return {
     lastBlockNumber: () => lastBlockNumber(),
     lastBlockTime: () => lastBlockTime(),
     increaseTime: (time: number) => increaseTime(time),
     mineBlocks: (blocks: number) => mineBlocks(blocks),
     mineBlocksTo: (targetBlock: number) => mineBlocksTo(targetBlock),
+    waitForTransaction: (txHash: string, confirmations?: number) =>
+      waitForTransaction(hre, txHash, confirmations),
   }
 }
