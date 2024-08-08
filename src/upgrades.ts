@@ -4,6 +4,7 @@ import type {
   Contract,
   ContractFactory,
   ContractTransactionResponse,
+  TransactionReceiptParams,
 } from "ethers"
 import type {
   Artifact,
@@ -15,7 +16,7 @@ import type {
   DeployProxyOptions,
   UpgradeProxyOptions,
 } from "@openzeppelin/hardhat-upgrades/src/utils/options"
-import { Libraries } from "hardhat-deploy/types"
+import { Libraries, Receipt } from "hardhat-deploy/types"
 
 export interface HardhatUpgradesHelpers {
   deployProxy<T extends Contract>(
@@ -115,6 +116,7 @@ export async function deployProxy<T extends Contract>(
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
+    receipt: convertReceipt(transactionReceipt),
   }
 
   await deployments.save(name, deployment)
@@ -199,11 +201,33 @@ async function upgradeProxy<T extends Contract>(
     libraries: opts?.factoryOpts?.libraries,
     devdoc: "Contract deployed as upgradable proxy",
     args: opts?.proxyOpts?.constructorArgs,
+    receipt: convertReceipt(transactionReceipt),
   }
 
   await deployments.save(proxyDeploymentName, deployment)
 
   return [newContractInstance, deployment]
+}
+
+function convertReceipt(tx: TransactionReceiptParams): Receipt {
+  return {
+    ...tx,
+    transactionHash: tx.hash,
+    transactionIndex: tx.index,
+    cumulativeGasUsed: tx.cumulativeGasUsed.toString(),
+    gasUsed: tx.gasUsed.toString(),
+    contractAddress: tx.contractAddress!,
+    to: tx.to!,
+    from: tx.from!,
+    status: tx.status!,
+    logs: tx.logs.map((log) => {
+      return {
+        ...log,
+        logIndex: log.index,
+        topics: log.topics.map((topic) => topic),
+      }
+    }),
+  }
 }
 
 export default function (
