@@ -3,6 +3,7 @@ import "@openzeppelin/hardhat-upgrades"
 import type {
   Contract,
   ContractFactory,
+  ContractTransaction,
   ContractTransactionResponse,
 } from "ethers"
 import type {
@@ -16,6 +17,12 @@ import type {
   UpgradeProxyOptions,
 } from "@openzeppelin/hardhat-upgrades/src/utils/options"
 import { Libraries } from "hardhat-deploy/types"
+import {
+  attachProxyAdminV4,
+  attachProxyAdminV5,
+} from "@openzeppelin/hardhat-upgrades/dist/utils"
+
+import { getUpgradeInterfaceVersion } from "@openzeppelin/upgrades-core"
 
 export interface HardhatUpgradesHelpers {
   deployProxy<T extends Contract>(
@@ -27,6 +34,14 @@ export interface HardhatUpgradesHelpers {
     newContractName: string,
     opts?: UpgradesUpgradeOptions
   ): Promise<[T, Deployment]>
+  prepareProxyUpgrade(
+    proxyDeploymentName: string,
+    newContractName: string,
+    opts?: UpgradesPrepareProxyUpgradeOptions
+  ): Promise<{
+    newImplementationAddress: string
+    preparedTransaction: ContractTransaction
+  }>
 }
 
 type CustomFactoryOptions = FactoryOptions & {
@@ -45,6 +60,12 @@ export interface UpgradesUpgradeOptions {
   initializerArgs?: unknown[]
   factoryOpts?: CustomFactoryOptions
   proxyOpts?: UpgradeProxyOptions
+}
+
+export interface UpgradesPrepareProxyUpgradeOptions {
+  contractName?: string
+  factoryOpts?: CustomFactoryOptions
+  callData?: string
 }
 
 /**
@@ -206,6 +227,118 @@ async function upgradeProxy<T extends Contract>(
   return [newContractInstance, deployment]
 }
 
+/**
+ * Prepare upgrade of deployed contract.
+ * It deploys new implementation contract and prepares transaction to upgrade
+ * the proxy contract to the new implementation thorough a Proxy Admin instance.
+ * The transaction has to be executed by the owner of the Proxy Admin.
+ *
+ * @param {HardhatRuntimeEnvironment} hre Hardhat runtime environment.
+ * @param {string} proxyDeploymentName Name of the proxy deployment that will be
+ *        upgraded.
+ * @param {string} newContractName Name of the new implementation contract.
+ * @param {UpgradesPrepareProxyUpgradeOptions} opts
+ */
+async function prepareProxyUpgrade(
+  hre: HardhatRuntimeEnvironment,
+  proxyDeploymentName: string,
+  newContractName: string,
+  opts?: UpgradesPrepareProxyUpgradeOptions
+): Promise<{
+  newImplementationAddress: string
+  preparedTransaction: ContractTransaction
+}> {
+  const { ethers, upgrades, deployments, artifacts } = hre
+  const signer = await ethers.provider.getSigner()
+  const { log } = deployments
+
+  const proxyDeployment: Deployment = await deployments.get(proxyDeploymentName)
+
+  const implementationContractFactory: ContractFactory =
+    await ethers.getContractFactory(
+      opts?.contractName || newContractName,
+      opts?.factoryOpts
+    )
+
+  const newImplementationAddress: string = (await upgrades.prepareUpgrade(
+    proxyDeployment.address,
+    implementationContractFactory,
+    {
+      kind: "transparent",
+      getTxResponse: false,
+    }
+  )) as string
+
+  log(`new implementation contract deployed at: ${newImplementationAddress}`)
+
+  const proxyAdminAddress = await hre.upgrades.erc1967.getAdminAddress(
+    proxyDeployment.address
+  )
+
+  let proxyAdmin: Contract
+  let upgradeTxData: string
+
+  const proxyInterfaceVersion = await getUpgradeInterfaceVersion(
+    hre.network.provider,
+    proxyAdminAddress
+  )
+
+  switch (proxyInterfaceVersion) {
+    case "5.0.0": {
+      proxyAdmin = await attachProxyAdminV5(hre, proxyAdminAddress, signer)
+
+      upgradeTxData = proxyAdmin.interface.encodeFunctionData(
+        "upgradeAndCall",
+        [
+          proxyDeployment.address,
+          newImplementationAddress,
+          opts?.callData ?? "0x",
+        ]
+      )
+      break
+    }
+    default: {
+      proxyAdmin = await attachProxyAdminV4(hre, proxyAdminAddress, signer)
+
+      if (opts?.callData) {
+        upgradeTxData = proxyAdmin.interface.encodeFunctionData(
+          "upgradeAndCall",
+          [proxyDeployment.address, newImplementationAddress, opts?.callData]
+        )
+      } else {
+        upgradeTxData = proxyAdmin.interface.encodeFunctionData("upgrade", [
+          proxyDeployment.address,
+          newImplementationAddress,
+        ])
+      }
+    }
+  }
+
+  const preparedTransaction: ContractTransaction = {
+    from: (await proxyAdmin.owner()) as string,
+    to: proxyAdminAddress,
+    data: upgradeTxData,
+  }
+
+  deployments.log(
+    `to upgrade the proxy implementation execute the following ` +
+      `transaction:\n${JSON.stringify(preparedTransaction, null, 2)}`
+  )
+
+  // Update Deployment Artifact
+  const artifact: Artifact = artifacts.readArtifactSync(
+    opts?.contractName || newContractName
+  )
+
+  await deployments.save(proxyDeploymentName, {
+    ...proxyDeployment,
+    abi: artifact.abi,
+    implementation: newImplementationAddress,
+  })
+
+  return { newImplementationAddress, preparedTransaction }
+}
+
 export default function (
   hre: HardhatRuntimeEnvironment
 ): HardhatUpgradesHelpers {
@@ -217,5 +350,10 @@ export default function (
       newContractName: string,
       opts?: UpgradesUpgradeOptions
     ) => upgradeProxy(hre, currentContractName, newContractName, opts),
+    prepareProxyUpgrade: (
+      proxyDeploymentName: string,
+      newContractName: string,
+      opts?: UpgradesPrepareProxyUpgradeOptions
+    ) => prepareProxyUpgrade(hre, proxyDeploymentName, newContractName, opts),
   }
 }
