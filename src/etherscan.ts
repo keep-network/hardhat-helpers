@@ -1,6 +1,5 @@
 import type { HardhatRuntimeEnvironment } from "hardhat/types"
 import type { Deployment } from "hardhat-deploy/dist/types"
-import { NomicLabsHardhatPluginError } from "hardhat/plugins"
 
 export interface HardhatEtherscanHelpers {
   verify(deployment: Deployment, contract?: string): Promise<void>
@@ -28,10 +27,14 @@ async function verify(
     })
     // Catch the error to workaround https://github.com/NomicFoundation/hardhat/issues/2287
   } catch (err) {
-    if (err instanceof NomicLabsHardhatPluginError) {
-      if (err.message.includes("Contract source code already verified")) {
-        console.log("Contract is already verified")
-      }
+    if (
+      err instanceof Error &&
+      (err.message.includes("Contract source code already verified") ||
+        err.message.includes("Already Verified"))
+    ) {
+      console.log("Contract is already verified")
+    } else {
+      console.error(err)
     }
   }
 }
